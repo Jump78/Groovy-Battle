@@ -8,7 +8,7 @@ import upArrowImg from "../assets/img/arrowUp.png";
 export default class {
   constructor( option ) {
     this.option = option;
-    this.isDie = false;
+    this.isDie = (option.isDie)? true :false;
     this.direction = option.direction || 'up'; // Arrow direction
     this.lifetime = option.lifetime || 0;
     this.coordinates = {
@@ -29,18 +29,43 @@ export default class {
     }
 
     this.sprite = new Image(); // Create new image
-    this.sprite.src = option.sprite || upArrowImg; // Set the image's sourc
+    this.sprite.src = option.sprite || upArrowImg; // Set the image's source
+
+    this.updateOption = option.update || null;
+    this.initOption = option.init || null;
   }
 
   die() {
     this.isDie = true;
-    this.constructor(this.option);
   }
 
   render(ctx){
     ctx.drawImage(this.sprite, this.coordinates.x,this.coordinates.y)
   }
 
+  init() {
+    this.isDie = false;
+    this.coordinates.y = this.option.coordinates.y || 0;
+    if (this.option.velocity) {
+      this.velocity = {
+        x: this.option.velocity.x || 0,
+        y: this.option.velocity.y || 0
+      }
+    } else {
+      this.velocity = {
+        x: 0,
+        y: 0
+      }
+    }
+    if (this.initOption) {
+      this.initOption();
+    }
+  }
+
   update() {
+    this.coordinates.y += this.velocity.y;
+    if (this.updateOption) {
+      this.updateOption();
+    }
   }
 }
