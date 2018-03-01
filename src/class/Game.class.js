@@ -22,16 +22,16 @@ export default class {
 
   gameloop () {
     this.context.clearRect(0, 0, this.canvas.width(), this.canvas.height());
-    let currentTime = Date.now();
-
-    if ( currentTime - this.startAt >= 500) {
-      this.startAt = currentTime;
-      const direction = ['up', 'right', 'down', 'left'];
-      let arrow = this.arrowManager.getArrow(direction[Math.floor(Math.random()*direction.length)], 1)[0]
-      arrow.init();
-      arrow.velocity.y = 2;
-      this.scene.push(arrow);
-    }
+    // let currentTime = Date.now();
+    //
+    // if ( currentTime - this.startAt >= 500) {
+    //   this.startAt = currentTime;
+    //   const direction = ['up', 'right', 'down', 'left'];
+    //   let arrow = this.arrowManager.getArrow(direction[Math.floor(Math.random()*direction.length)], 1)[0]
+    //   arrow.init();
+    //   arrow.velocity.y = 2;
+    //   this.scene.push(arrow);
+    // }
 
     let self = this;
     this.scene.forEach( item => {
