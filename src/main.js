@@ -12,9 +12,13 @@ import Keyboard from './class/Keyboard.class';
 import Player from './class/Player.class.js';
 
 const arrowSprite = {upArrowBorderImg, rightArrowBorderImg, downArrowBorderImg, leftArrowBorderImg};
-const directions = ['up', 'right', 'down', 'left'];
+const directions = ['left', 'up', 'down', 'right'];
 
-let arrowsBorderGenerate = directions.map( (direction, index) => {
+const GAME = new Game({
+  canvas: $('#game')
+})
+
+let arrowsBorderP1Generate = directions.map( (direction, index) => {
   return new Arrow({
     direction: direction,
     isDie: false,
@@ -25,9 +29,16 @@ let arrowsBorderGenerate = directions.map( (direction, index) => {
     sprite: arrowSprite[direction+'ArrowBorderImg']
   });
 })
-
-const GAME = new Game({
-  canvas: $('#game')
+let arrowsBorderP2Generate = directions.map( (direction, index) => {
+  return new Arrow({
+    direction: direction,
+    isDie: false,
+    coordinates: {
+      x: GAME.canvas.parent().width() - (50*(directions.length-index)),
+      y:200
+    },
+    sprite: arrowSprite[direction+'ArrowBorderImg']
+  });
 })
 
 let player1 = new Player({
@@ -35,7 +46,7 @@ let player1 = new Player({
   keyboard: new Keyboard(),
   arrowManager: new ArrowManager({
     init(){
-      let arrowDesti = arrowsBorderGenerate.filter( arrow => arrow.direction == this.direction)[0];
+      let arrowDesti = arrowsBorderP1Generate.filter( arrow => arrow.direction == this.direction)[0];
       this.maxCoordinates.y = arrowDesti.coordinates.y;
       this.coordinates.x = arrowDesti.coordinates.x;
     },
@@ -88,15 +99,16 @@ let player1 = new Player({
     ctx.fillRect(0, 10 , 150*(this.currentEnergy/this.maxEnergy), 10);
   }
 })
+player1.arrowManager.generate({}, 40);
 
 let player2 = new Player({
   name: 'Player2',
   keyboard: new Keyboard({up: 38, right: 39, down: 40, left: 37}),
   arrowManager: new ArrowManager({
     init(){
-      let arrowDesti = arrowsBorderGenerate.filter( arrow => arrow.direction == this.direction)[0];
+      let arrowDesti = arrowsBorderP2Generate.filter( arrow => arrow.direction == this.direction)[0];
       this.maxCoordinates.y = arrowDesti.coordinates.y;
-      this.coordinates.x = GAME.canvas.parent().width() - arrowDesti.coordinates.x;
+      this.coordinates.x = arrowDesti.coordinates.x;
     },
     update(){
       if (this.coordinates.y > this.maxCoordinates.y) {
@@ -147,9 +159,10 @@ let player2 = new Player({
     ctx.fillRect(GAME.canvas.parent().width(), 10 , -150*(this.currentEnergy/this.maxEnergy), 10);
   }
 })
+player2.arrowManager.generate({}, 40);
 
-
-GAME.scene.push(...arrowsBorderGenerate);
+GAME.scene.push(...arrowsBorderP1Generate);
+GAME.scene.push(...arrowsBorderP2Generate);
 GAME.scene.push(player1);
 GAME.scene.push(player2);
 GAME.gameloop();
