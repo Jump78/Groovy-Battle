@@ -10,9 +10,9 @@ export default class {
     this.pressed = {};
 
     this.up = option.up || 90;
-    this.left = option.left || 68;
+    this.right = option.right || 68;
     this.down = option.down || 83;
-    this.right = option.right || 81;
+    this.left = option.left || 81;
 
     $('body').on('keydown', (e) => {
       this.pressed[e.keyCode] = true;
