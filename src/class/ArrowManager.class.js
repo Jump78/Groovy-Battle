@@ -40,12 +40,19 @@ export default class {
   }
 
   getArrow( direction, number ){
-    let arrows = this[direction+'ArrowPool'].filter( (arrow, index) => arrow.isDie);
-    
+    let arrows = this[direction+'ArrowPool'].filter( (arrow) => arrow.isDie);
+
     if (arrows.length < number) {
       let arrowGenerate = this.generate( {direction}, number - arrows.length);
       arrows = arrows.concat(arrowGenerate);
     }
+
+    return arrows.slice(0, number);
+  }
+
+  getArrowIf( direction, number, filter ){
+
+    let arrows = this[direction+'ArrowPool'].filter( (arrow) => filter(arrow));
 
     return arrows.slice(0, number);
   }
