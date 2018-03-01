@@ -16,6 +16,11 @@ export default class {
         y: option.coordinates.y || 0  // Y coordinate
     };
 
+    this.maxCoordinates = {
+      x: Infinity,
+      y: Infinity
+    }
+
     this.velocity = {
       x: 0,
       y: 0
