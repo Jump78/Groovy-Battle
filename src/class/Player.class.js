@@ -18,6 +18,20 @@ export default class {
     this.update = option.update || defaultFunc;
     this.render = option.render || defaultFunc;
 
+    this.isDefenseMode = false;
+    this.defense = 0.00001;
+
     this.startAt = Date.now();
+  }
+
+  takeDamage( damage ){
+    let realDamage = damage;
+
+    if (this.isDefenseMode) {
+      realDamage = damage * this.defense;
+    }
+
+    this.currentLife -= realDamage;
+    return realDamage;
   }
 }

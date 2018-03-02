@@ -62,24 +62,47 @@ let player1 = new Player({
     let downArrow = this.arrowManager.getArrowIf('down', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
     let leftArrow = this.arrowManager.getArrowIf('left', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
 
+    if (this.keyboard.isDown(this.keyboard.defenseMode)) {
+      this.isDefenseMode = true;
+    } else {
+      this.isDefenseMode = false;
+    }
+
     if (this.keyboard.isDown(this.keyboard.up) && upArrow){
+      if (!this.isDefenseMode) {
+        player2.currentLife -= 2;
+      }
       upArrow.die();
-      player2.currentLife -= 2;
     }
 
     if (this.keyboard.isDown(this.keyboard.right) && rightArrow){
+      if (this.keyboard.isDown(this.keyboard.defenseMode)) {
+        this.isDefenseMode = true;
+      } else {
+        this.isDefenseMode = false;
+        player2.currentLife -= 2;
+      }
       rightArrow.die();
-      player2.currentLife -= 2;
     }
 
     if (this.keyboard.isDown(this.keyboard.down) && downArrow){
+      if (this.keyboard.isDown(this.keyboard.defenseMode)) {
+        this.isDefenseMode = true;
+      } else {
+        this.isDefenseMode = false;
+        player2.currentLife -= 2;
+      }
       downArrow.die();
-      player2.currentLife -= 2;
     }
 
     if (this.keyboard.isDown(this.keyboard.left) && leftArrow){
+      if (this.keyboard.isDown(this.keyboard.defenseMode)) {
+        this.isDefenseMode = true;
+      } else {
+        this.isDefenseMode = false;
+        player2.currentLife -= 2;
+      }
       leftArrow.die();
-      player2.currentLife -= 2;
     }
 
     let currentTime = Date.now();
@@ -97,6 +120,10 @@ let player1 = new Player({
     ctx.fillRect(0, 0 , 250*(this.currentLife/this.maxLife), 10);
     ctx.fillStyle = '#0000FF';
     ctx.fillRect(0, 10 , 150*(this.currentEnergy/this.maxEnergy), 10);
+    if (this.isDefenseMode == true) {
+      ctx.fillStyle = '#F000FF';
+      ctx.fillRect(0, 20 , 100, 10);
+    }
   }
 })
 player1.arrowManager.generate({}, 40);
@@ -122,24 +149,24 @@ let player2 = new Player({
     let downArrow = this.arrowManager.getArrowIf('down', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
     let leftArrow = this.arrowManager.getArrowIf('left', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
 
-    if (this.keyboard.isDown(this.keyboard.up) && upArrow){
+    if (/*this.keyboard.isDown(this.keyboard.up) &&*/ upArrow){
       upArrow.die();
-      player1.currentLife -= 2;
+      player1.takeDamage(2);
     }
 
-    if (this.keyboard.isDown(this.keyboard.right) && rightArrow){
+    if (/*this.keyboard.isDown(this.keyboard.right) &&*/ rightArrow){
       rightArrow.die();
-      player1.currentLife -= 2;
+      player1.takeDamage(2);
     }
 
-    if (this.keyboard.isDown(this.keyboard.down) && downArrow){
+    if (/*this.keyboard.isDown(this.keyboard.down) &&*/ downArrow){
       downArrow.die();
-      player1.currentLife -= 2;
+      player1.takeDamage(2);
     }
 
-    if (this.keyboard.isDown(this.keyboard.left) && leftArrow){
+    if (/*this.keyboard.isDown(this.keyboard.left) &&*/ leftArrow){
       leftArrow.die();
-      player1.currentLife -= 2;
+      player1.takeDamage(2);
     }
 
     let currentTime = Date.now();

@@ -13,6 +13,7 @@ export default class {
     this.right = option.right || 68;
     this.down = option.down || 83;
     this.left = option.left || 81;
+    this.defenseMode = option.defenseMode || 16;
 
     $('body').on('keydown', (e) => {
       this.pressed[e.keyCode] = true;
