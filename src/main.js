@@ -9,7 +9,11 @@ import Game from './class/Game.class';
 import Arrow from './class/Arrow.class';
 import ArrowManager from './class/ArrowManager.class';
 import Keyboard from './class/Keyboard.class';
-import Player from './class/Player.class.js';
+import Player from './class/Player.class';
+import Spell from './class/Spell.class';
+
+import data from './data.json';
+
 
 const arrowSprite = {upArrowBorderImg, rightArrowBorderImg, downArrowBorderImg, leftArrowBorderImg};
 const directions = ['left', 'up', 'down', 'right'];
@@ -17,6 +21,8 @@ const directions = ['left', 'up', 'down', 'right'];
 const GAME = new Game({
   canvas: $('#game')
 })
+
+var message = '';
 
 let arrowsBorderP1Generate = directions.map( (direction, index) => {
   return new Arrow({
@@ -44,6 +50,7 @@ let arrowsBorderP2Generate = directions.map( (direction, index) => {
 let player1 = new Player({
   name: 'Player1',
   keyboard: new Keyboard(),
+  spells: data.spells.map( spell => new Spell(spell)),
   arrowManager: new ArrowManager({
     init(){
       let arrowDesti = arrowsBorderP1Generate.filter( arrow => arrow.direction == this.direction)[0];
@@ -57,56 +64,133 @@ let player1 = new Player({
     }
   }),
   update() {
+    if (this.currentLife <= 0) {
+      this.isDie = true;
+      message = "Player 2 win";
+      return;
+    }
+
     let upArrow = this.arrowManager.getArrowIf('up', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
     let rightArrow = this.arrowManager.getArrowIf('right', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
     let downArrow = this.arrowManager.getArrowIf('down', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
     let leftArrow = this.arrowManager.getArrowIf('left', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
 
     if (this.keyboard.isDown(this.keyboard.defenseMode)) {
-      this.isDefenseMode = true;
+      this.mode = 'defense';
+    } else if (this.keyboard.isDown(this.keyboard.ultraMode)) {
+      this.mode = 'ultra';
+      this.currentEnergy -= 1;
+      if (this.currentEnergy <= 0) {
+        this.mode = 'attack';
+      }
     } else {
-      this.isDefenseMode = false;
+      let spell = this.spells.filter( spell => spell.incantation.toString() == this.incantation.toString())[0];
+      if (this.incantation.length > 0 && spell){
+        if (spell.self) {
+          this.attack(this, spell);
+        } else {
+          this.attack(player2, spell);
+        }
+        this.canAddIncantation = true;
+      }
+      this.incantation = [];
+      this.mode = 'attack';
     }
 
-    if (this.keyboard.isDown(this.keyboard.up) && upArrow){
-      if (!this.isDefenseMode) {
+    if (this.keyboard.isDown(this.keyboard.up)){
+      if (this.mode == 'attack' && upArrow) {
         player2.currentLife -= 2;
+        this.currentEnergy += 1;
+        if (this.currentEnergy > this.maxEnergy) {
+          this.currentEnergy = this.maxEnergy;
+        }
+        upArrow.die();
+      } else if (this.mode == 'ultra' && this.canAddIncantation) {
+        this.incantation.push('up');
+        this.canAddIncantation = false;
+        let self = this;
+        setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
+      } else if (this.mode == 'defense' && upArrow){
+        this.defenseSuccess = true;
+        this.currentEnergy += 1;
+        if (this.currentEnergy > this.maxEnergy) {
+          this.currentEnergy = this.maxEnergy;
+        }
+        upArrow.die();
       }
-      upArrow.die();
     }
 
-    if (this.keyboard.isDown(this.keyboard.right) && rightArrow){
-      if (this.keyboard.isDown(this.keyboard.defenseMode)) {
-        this.isDefenseMode = true;
-      } else {
-        this.isDefenseMode = false;
+    if (this.keyboard.isDown(this.keyboard.right)){
+      if (this.mode == 'attack' && rightArrow) {
         player2.currentLife -= 2;
+        this.currentEnergy += 1;
+        if (this.currentEnergy > this.maxEnergy) {
+          this.currentEnergy = this.maxEnergy;
+        }
+        rightArrow.die();
+      } else if (this.mode == 'ultra' && this.canAddIncantation) {
+        this.incantation.push('right');
+        this.canAddIncantation = false;
+        let self = this;
+        setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
+      } else if (this.mode == 'defense' && rightArrow){
+        this.defenseSuccess = true;
+        this.currentEnergy += 1;
+        if (this.currentEnergy > this.maxEnergy) {
+          this.currentEnergy = this.maxEnergy;
+        }
+        rightArrow.die();
       }
-      rightArrow.die();
     }
 
-    if (this.keyboard.isDown(this.keyboard.down) && downArrow){
-      if (this.keyboard.isDown(this.keyboard.defenseMode)) {
-        this.isDefenseMode = true;
-      } else {
-        this.isDefenseMode = false;
+    if (this.keyboard.isDown(this.keyboard.down)){
+      if (this.mode == 'attack' && downArrow) {
         player2.currentLife -= 2;
+        this.currentEnergy += 1;
+        if (this.currentEnergy > this.maxEnergy) {
+          this.currentEnergy = this.maxEnergy;
+        }
+        downArrow.die();
+      } else if (this.mode == 'ultra' && this.canAddIncantation) {
+        this.incantation.push('down');
+        this.canAddIncantation = false;
+        let self = this;
+        setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
+      } else if (this.mode == 'defense' && downArrow){
+        this.defenseSuccess = true;
+        this.currentEnergy += 1;
+        if (this.currentEnergy > this.maxEnergy) {
+          this.currentEnergy = this.maxEnergy;
+        }
+        downArrow.die();
       }
-      downArrow.die();
     }
 
-    if (this.keyboard.isDown(this.keyboard.left) && leftArrow){
-      if (this.keyboard.isDown(this.keyboard.defenseMode)) {
-        this.isDefenseMode = true;
-      } else {
-        this.isDefenseMode = false;
+    if (this.keyboard.isDown(this.keyboard.left)){
+      if (this.mode == 'attack' && leftArrow) {
         player2.currentLife -= 2;
+        this.currentEnergy += 1;
+        if (this.currentEnergy > this.maxEnergy) {
+          this.currentEnergy = this.maxEnergy;
+        }
+        leftArrow.die();
+      } else if (this.mode == 'ultra' && this.canAddIncantation) {
+        this.incantation.push('left');
+        this.canAddIncantation = false;
+        let self = this;
+        setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
+      } else if (this.mode == 'defense' && leftArrow){
+        this.defenseSuccess = true;
+        this.currentEnergy += 1;
+        if (this.currentEnergy > this.maxEnergy) {
+          this.currentEnergy = this.maxEnergy;
+        }
+        leftArrow.die();
       }
-      leftArrow.die();
     }
 
     let currentTime = Date.now();
-    if ( currentTime - this.startAt >= 500) {
+    if ( currentTime - this.startAt >= 500 && !this.isUltraMode) {
       this.startAt = currentTime;
       const direction = ['up', 'right', 'down', 'left'];
       let arrow = this.arrowManager.getArrow(direction[Math.floor(Math.random()*direction.length)], 1)[0]
@@ -120,7 +204,7 @@ let player1 = new Player({
     ctx.fillRect(0, 0 , 250*(this.currentLife/this.maxLife), 10);
     ctx.fillStyle = '#0000FF';
     ctx.fillRect(0, 10 , 150*(this.currentEnergy/this.maxEnergy), 10);
-    if (this.isDefenseMode == true) {
+    if (this.mode == 'defense') {
       ctx.fillStyle = '#F000FF';
       ctx.fillRect(0, 20 , 100, 10);
     }
@@ -144,6 +228,12 @@ let player2 = new Player({
     }
   }),
   update() {
+    if (this.currentLife <= 0) {
+      this.isDie = true;
+      message = "Player 1 win";
+      return;
+    }
+
     let upArrow = this.arrowManager.getArrowIf('up', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
     let rightArrow = this.arrowManager.getArrowIf('right', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
     let downArrow = this.arrowManager.getArrowIf('down', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
@@ -192,4 +282,13 @@ GAME.scene.push(...arrowsBorderP1Generate);
 GAME.scene.push(...arrowsBorderP2Generate);
 GAME.scene.push(player1);
 GAME.scene.push(player2);
+GAME.scene.push({
+  render(ctx) {
+    ctx.fillStyle = '#FF0000';
+    ctx.font = "60px Impact";
+    ctx.textAlign = "center";
+    ctx.fillText(message,GAME.canvas.width()/2,GAME.canvas.height()/2);
+  },
+  update(){}
+});
 GAME.gameloop();

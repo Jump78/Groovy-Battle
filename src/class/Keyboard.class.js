@@ -14,6 +14,7 @@ export default class {
     this.down = option.down || 83;
     this.left = option.left || 81;
     this.defenseMode = option.defenseMode || 16;
+    this.ultraMode = option.ultraMode || 32;
 
     $('body').on('keydown', (e) => {
       this.pressed[e.keyCode] = true;

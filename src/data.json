@@ -1,0 +1,36 @@
+{
+  "spells": [
+    {
+      "name": "Heal",
+      "description": "Permet de recupérer 5hp",
+      "incantation": ["up", "down"],
+      "self": true,
+      "effect": {
+        "damage": 0,
+        "energyRestore": 0,
+        "healthRestore": 5,
+        "buffName": 0,
+        "buffAmount": 0,
+        "speed": 1,
+        "repeat": 0,
+        "delay": 0
+      }
+    },
+    {
+      "name": "Imma firin' my lazor",
+      "description": "Inflige de gros dégats",
+      "incantation": ["right", "down", "left", "up"],
+      "self": false,
+      "effect": {
+        "damage": 5,
+        "energyRestore": 0,
+        "healthRestore": 0,
+        "buffName": 0,
+        "buffAmount": 0,
+        "speed": 1,
+        "repeat": 0,
+        "delay": 0
+      }
+    }
+  ]
+}
