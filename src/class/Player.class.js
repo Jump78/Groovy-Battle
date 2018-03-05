@@ -51,7 +51,34 @@ export default class {
     return realDamage;
   }
 
-  attack (target, attackObject){
-    attackObject.use(target);
+  attack (target, spell){
+    spell.use(target);
+  }
+
+  defense () {
+
+  }
+
+  action (arrow, target, direction) {
+    if (this.mode == 'attack' && arrow) {
+      target.takeDamage(2);
+      this.currentEnergy += 5;
+      if (this.currentEnergy > this.maxEnergy) {
+        this.currentEnergy = this.maxEnergy;
+      }
+      arrow.die();
+    } else if (this.mode == 'ultra' && this.canAddIncantation) {
+      this.incantation.push(direction);
+      this.canAddIncantation = false;
+      let self = this;
+      setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
+    } else if (this.mode == 'defense' && arrow){
+      this.defenseSuccess = true;
+      this.currentEnergy += 5;
+      if (this.currentEnergy > this.maxEnergy) {
+        this.currentEnergy = this.maxEnergy;
+      }
+      arrow.die();
+    }
   }
 }
