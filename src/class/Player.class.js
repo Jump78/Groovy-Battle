@@ -61,7 +61,7 @@ export default class {
 
   action (arrow, target, direction) {
     if (this.mode == 'attack' && arrow) {
-      target.takeDamage(2);
+      this.attack(target, this.spells[0])
       this.currentEnergy += 5;
       if (this.currentEnergy > this.maxEnergy) {
         this.currentEnergy = this.maxEnergy;

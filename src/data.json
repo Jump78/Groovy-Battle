@@ -1,6 +1,21 @@
 {
   "spells": [
     {
+      "name": "Basic attack",
+      "description": "Attaque de base",
+      "incantation": [],
+      "effect": {
+        "damage": 2,
+        "energyRestore": 0,
+        "healthRestore": 0,
+        "buffName": 0,
+        "buffAmount": 0,
+        "speed": 1,
+        "repeat": 0,
+        "delay": 0
+      }
+    },
+    {
       "name": "Heal",
       "description": "Permet de recupérer 5hp",
       "incantation": ["up", "down"],
