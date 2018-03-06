@@ -18,11 +18,11 @@ export default class {
 
     this.arrowManager = option.arrowManager || {};
 
-    this.update = option.update || defaultFunc;
+    this.updateCustom = option.update || defaultFunc;
     this.render = option.render || defaultFunc;
 
     this.mode = 'attack';
-    this.defense = 0.00001;
+    this.defenseStat = 4;
     this.defenseSuccess = false;
 
     this.isUltraMode = false;
@@ -31,6 +31,8 @@ export default class {
 
     this.globalCooldown = 150;
 
+    this.target = option.target || null;
+
     this.startAt = Date.now();
   }
 
@@ -38,7 +40,7 @@ export default class {
     let realDamage = damage;
 
     if (this.defenseSuccess) {
-      realDamage = damage * this.defense;
+      realDamage = damage / this.defenseStat;
       this.defenseSuccess = false;
     }
 
@@ -56,7 +58,11 @@ export default class {
   }
 
   defense () {
-
+    this.defenseSuccess = true;
+    this.currentEnergy += 5;
+    if (this.currentEnergy > this.maxEnergy) {
+      this.currentEnergy = this.maxEnergy;
+    }
   }
 
   action (arrow, target, direction) {
@@ -73,12 +79,68 @@ export default class {
       let self = this;
       setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
     } else if (this.mode == 'defense' && arrow){
-      this.defenseSuccess = true;
-      this.currentEnergy += 5;
-      if (this.currentEnergy > this.maxEnergy) {
-        this.currentEnergy = this.maxEnergy;
-      }
+      this.defense();
       arrow.die();
+    }
+  }
+
+  checkIncantation (incantation) {
+    let spell = this.spells.filter( spell => spell.incantation.toString() == this.incantation.toString())[0];
+    if (this.incantation.length > 0 && spell){
+      return true;
+    }
+    return false
+  }
+
+  update() {
+    if (this.currentLife <= 0) {
+      this.isDie = true;
+    }
+
+    let upArrow = this.arrowManager.getArrowIf('up', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
+    let rightArrow = this.arrowManager.getArrowIf('right', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
+    let downArrow = this.arrowManager.getArrowIf('down', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
+    let leftArrow = this.arrowManager.getArrowIf('left', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
+
+    if (this.keyboard.isDown(this.keyboard.defenseMode)) {
+      this.mode = 'defense';
+    } else if (this.keyboard.isDown(this.keyboard.ultraMode)) {
+      this.mode = 'ultra';
+      this.currentEnergy -= 1;
+      if (this.currentEnergy <= 0) {
+        this.mode = 'attack';
+      }
+    } else {
+      if (this.checkIncantation()){
+        if (spell.self) {
+          this.attack(this, spell);
+        } else {
+          this.attack(this.target, spell);
+        }
+      };
+      this.canAddIncantation = true;
+      this.incantation = [];
+      this.mode = 'attack';
+    }
+
+    if (this.keyboard.isDown(this.keyboard.up)){
+      this.action(upArrow, this.target, 'up');
+    }
+
+    if (this.keyboard.isDown(this.keyboard.right)){
+      this.action(rightArrow, this.target, 'right');
+    }
+
+    if (this.keyboard.isDown(this.keyboard.down)){
+      this.action(downArrow, this.target, 'down');
+    }
+
+    if (this.keyboard.isDown(this.keyboard.left)){
+      this.action(leftArrow, this.target, 'left');
+    }
+
+    if (this.updateCustom) {
+      this.updateCustom();
     }
   }
 }

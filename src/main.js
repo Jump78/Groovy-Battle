@@ -64,57 +64,13 @@ let player1 = new Player({
     }
   }),
   update() {
-    if (this.currentLife <= 0) {
-      this.isDie = true;
+    if (this.isDie) {
       message = "Player 2 win";
       return;
     }
 
-    let upArrow = this.arrowManager.getArrowIf('up', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
-    let rightArrow = this.arrowManager.getArrowIf('right', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
-    let downArrow = this.arrowManager.getArrowIf('down', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
-    let leftArrow = this.arrowManager.getArrowIf('left', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
-
-    if (this.keyboard.isDown(this.keyboard.defenseMode)) {
-      this.mode = 'defense';
-    } else if (this.keyboard.isDown(this.keyboard.ultraMode)) {
-      this.mode = 'ultra';
-      this.currentEnergy -= 1;
-      if (this.currentEnergy <= 0) {
-        this.mode = 'attack';
-      }
-    } else {
-      let spell = this.spells.filter( spell => spell.incantation.toString() == this.incantation.toString())[0];
-      if (this.incantation.length > 0 && spell){
-        if (spell.self) {
-          this.attack(this, spell);
-        } else {
-          this.attack(player2, spell);
-        }
-        this.canAddIncantation = true;
-      }
-      this.incantation = [];
-      this.mode = 'attack';
-    }
-
-    if (this.keyboard.isDown(this.keyboard.up)){
-      this.action(upArrow, player2, 'up');
-    }
-
-    if (this.keyboard.isDown(this.keyboard.right)){
-      this.action(rightArrow, player2, 'right');
-    }
-
-    if (this.keyboard.isDown(this.keyboard.down)){
-      this.action(downArrow, player2, 'down');
-    }
-
-    if (this.keyboard.isDown(this.keyboard.left)){
-      this.action(leftArrow, player2, 'left');
-    }
-
     let currentTime = Date.now();
-    if ( currentTime - this.startAt >= 500 && !this.isUltraMode) {
+    if ( currentTime - this.startAt >= 500 && this.mode != 'ultra') {
       this.startAt = currentTime;
       const direction = ['up', 'right', 'down', 'left'];
       let arrow = this.arrowManager.getArrow(direction[Math.floor(Math.random()*direction.length)], 1)[0]
@@ -186,7 +142,7 @@ let player2 = new Player({
       this.mode = 'attack';
     }
 
-    if (this.keyboard.isDown(this.keyboard.up)){
+    if (this.keyboard.isDown(this.keyboard.up) == null){
       if (this.mode == 'attack' && upArrow) {
         player1.takeDamage(2);
         this.currentEnergy += 5;
@@ -209,7 +165,7 @@ let player2 = new Player({
       }
     }
 
-    if (this.keyboard.isDown(this.keyboard.right)){
+    if (this.keyboard.isDown(this.keyboard.right) == null){
       if (this.mode == 'attack' && rightArrow) {
         player1.takeDamage(2);
         this.currentEnergy += 5;
@@ -232,7 +188,7 @@ let player2 = new Player({
       }
     }
 
-    if (this.keyboard.isDown(this.keyboard.down)){
+    if (this.keyboard.isDown(this.keyboard.down) == null){
       if (this.mode == 'attack' && downArrow) {
         player1.takeDamage(2);
         this.currentEnergy += 5;
@@ -255,7 +211,7 @@ let player2 = new Player({
       }
     }
 
-    if (this.keyboard.isDown(this.keyboard.left)){
+    if (this.keyboard.isDown(this.keyboard.left) == null){
       if (this.mode == 'attack' && leftArrow) {
         player1.takeDamage(2);
         this.currentEnergy += 5;
@@ -300,6 +256,9 @@ let player2 = new Player({
   }
 })
 player2.arrowManager.generate({}, 40);
+
+player1.target = player2;
+
 
 GAME.scene.push(...arrowsBorderP1Generate);
 GAME.scene.push(...arrowsBorderP2Generate);
