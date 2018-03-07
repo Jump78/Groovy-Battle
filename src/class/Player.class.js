@@ -22,14 +22,11 @@ export default class {
     this.render = option.render || defaultFunc;
 
     this.mode = 'attack';
-    this.defenseStat = 4;
+    this.defenseStat = 40;
     this.defenseSuccess = false;
 
     this.isUltraMode = false;
     this.incantation = [];
-    this.canAddIncantation = true;
-
-    this.globalCooldown = 150;
 
     this.target = option.target || null;
 
@@ -73,21 +70,23 @@ export default class {
         this.currentEnergy = this.maxEnergy;
       }
       arrow.die();
-    } else if (this.mode == 'ultra' && this.canAddIncantation) {
+    } else if (this.mode == 'ultra') {
       this.incantation.push(direction);
-      this.canAddIncantation = false;
-      let self = this;
-      setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
     } else if (this.mode == 'defense' && arrow){
       this.defense();
       arrow.die();
     }
   }
 
-  checkIncantation (incantation) {
-    let spell = this.spells.filter( spell => spell.incantation.toString() == this.incantation.toString())[0];
-    if (this.incantation.length > 0 && spell){
-      return true;
+  cast (incantation) {
+    if (incantation.length <= 0) return;
+    let spell = this.spells.filter( spell => spell.incantation.toString() == incantation.toString())[0];
+    if (spell){
+      if (spell.self) {
+        this.attack(this, spell);
+      } else {
+        this.attack(this.target, spell);
+      }
     }
     return false
   }
@@ -111,32 +110,29 @@ export default class {
         this.mode = 'attack';
       }
     } else {
-      if (this.checkIncantation()){
-        if (spell.self) {
-          this.attack(this, spell);
-        } else {
-          this.attack(this.target, spell);
-        }
-      };
-      this.canAddIncantation = true;
-      this.incantation = [];
       this.mode = 'attack';
+      this.cast(this.incantation);
+      this.incantation = [];
     }
 
     if (this.keyboard.isDown(this.keyboard.up)){
       this.action(upArrow, this.target, 'up');
+      this.keyboard.remove(this.keyboard.up)
     }
 
     if (this.keyboard.isDown(this.keyboard.right)){
       this.action(rightArrow, this.target, 'right');
+      this.keyboard.remove(this.keyboard.right)
     }
 
     if (this.keyboard.isDown(this.keyboard.down)){
       this.action(downArrow, this.target, 'down');
+      this.keyboard.remove(this.keyboard.down)
     }
 
     if (this.keyboard.isDown(this.keyboard.left)){
       this.action(leftArrow, this.target, 'left');
+      this.keyboard.remove(this.keyboard.left)
     }
 
     if (this.updateCustom) {

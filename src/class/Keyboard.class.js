@@ -21,11 +21,15 @@ export default class {
     });
 
     $('body').on('keyup', (e) => {
-      delete this.pressed[e.keyCode];
+      this.remove(e.keyCode)
     });
   }
 
   isDown (keyCode) {
     return this.pressed[keyCode];
+  }
+
+  remove(keyCode){
+    delete this.pressed[keyCode];
   }
 }
