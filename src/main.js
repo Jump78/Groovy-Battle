@@ -59,7 +59,7 @@ let player1 = new Player({
     },
     update(){
       if (this.coordinates.y > this.maxCoordinates.y) {
-        this.die();
+        //this.die();
       }
     }
   }),
