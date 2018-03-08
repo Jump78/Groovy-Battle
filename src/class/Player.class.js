@@ -96,10 +96,16 @@ export default class {
       this.isDie = true;
     }
 
-    let upArrow = this.arrowManager.getArrowIf('up', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
-    let rightArrow = this.arrowManager.getArrowIf('right', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
-    let downArrow = this.arrowManager.getArrowIf('down', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
-    let leftArrow = this.arrowManager.getArrowIf('left', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
+    const filterFunc = (arrow) => {
+      return !arrow.isDie
+             && (arrow.maxCoordinates.y - arrow.coordinates.y) >= 0
+             && (arrow.maxCoordinates.y - arrow.coordinates.y) < 30
+    }
+
+    let upArrow = this.arrowManager.getArrowIf('up', 1, filterFunc)[0];
+    let rightArrow = this.arrowManager.getArrowIf('right', 1, filterFunc)[0];
+    let downArrow = this.arrowManager.getArrowIf('down', 1, filterFunc)[0];
+    let leftArrow = this.arrowManager.getArrowIf('left', 1, filterFunc)[0];
 
     if (this.keyboard.isDown(this.keyboard.defenseMode)) {
       this.mode = 'defense';
