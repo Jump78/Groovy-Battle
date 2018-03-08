@@ -31,6 +31,8 @@ export default class {
     this.target = option.target || null;
 
     this.startAt = Date.now();
+
+    this.arrowHitboxRadius = option.arrowHitboxRadius || 30;
   }
 
   takeDamage( damage ){
@@ -99,7 +101,7 @@ export default class {
     const filterFunc = (arrow) => {
       return !arrow.isDie
              && (arrow.maxCoordinates.y - arrow.coordinates.y) >= 0
-             && (arrow.maxCoordinates.y - arrow.coordinates.y) < 30
+             && (arrow.maxCoordinates.y - arrow.coordinates.y) <= this.arrowHitboxRadius
     }
 
     let upArrow = this.arrowManager.getArrowIf('up', 1, filterFunc)[0];

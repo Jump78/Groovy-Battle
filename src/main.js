@@ -32,7 +32,19 @@ let arrowsBorderP1Generate = directions.map( (direction, index) => {
       x:50*(index),
       y:200
     },
-    sprite: arrowSprite[direction+'ArrowBorderImg']
+    sprite: arrowSprite[direction+'ArrowBorderImg'],
+    render(ctx){
+      ctx.beginPath();
+      ctx.arc((this.coordinates.x+(this.coordinates.x+this.sprite.width))/2,
+              (this.coordinates.y+(this.coordinates.y+this.sprite.height))/2,
+              player1.arrowHitboxRadius,
+              0,
+              Math.PI*2,
+              true
+            );
+      ctx.fill();
+      ctx.closePath();
+    }
   });
 })
 let arrowsBorderP2Generate = directions.map( (direction, index) => {

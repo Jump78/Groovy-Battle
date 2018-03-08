@@ -37,6 +37,7 @@ export default class {
     this.sprite.src = option.sprite || upArrowImg; // Set the image's source
 
     this.updateOption = option.update || null;
+    this.renderOption = option.render || null;
     this.initOption = option.init || null;
   }
 
@@ -45,7 +46,10 @@ export default class {
   }
 
   render(ctx){
-    ctx.drawImage(this.sprite, this.coordinates.x,this.coordinates.y)
+    if (this.renderOption) {
+      this.renderOption(ctx);
+    }
+    ctx.drawImage(this.sprite, this.coordinates.x,this.coordinates.y);
   }
 
   init() {
