@@ -70,8 +70,8 @@ let player1 = new Player({
       this.coordinates.x = arrowDesti.coordinates.x;
     },
     update(){
-      if (this.coordinates.y > this.maxCoordinates.y) {
-        //this.die();
+      if (this.coordinates.y > GAME.canvas.height()) {
+        this.die();
       }
     }
   }),
