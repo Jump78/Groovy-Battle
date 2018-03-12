@@ -66,7 +66,7 @@ let player1 = new Player({
   arrowManager: new ArrowManager({
     init(){
       let arrowDesti = arrowsBorderP1Generate.filter( arrow => arrow.direction == this.direction)[0];
-      this.maxCoordinates.y = arrowDesti.coordinates.y;
+      this.maxCoordinates.y = arrowDesti.getCenter().y;
       this.coordinates.x = arrowDesti.coordinates.x;
     },
     update(){
@@ -82,7 +82,7 @@ let player1 = new Player({
     }
 
     let currentTime = Date.now();
-    if ( currentTime - this.startAt >= 500 && this.mode != 'ultra') {
+    if ( currentTime - this.startAt >= 1000 && this.mode != 'ultra') {
       this.startAt = currentTime;
       const direction = ['up', 'right', 'down', 'left'];
       let arrow = this.arrowManager.getArrow(direction[Math.floor(Math.random()*direction.length)], 1)[0]
@@ -106,6 +106,7 @@ player1.arrowManager.generate({}, 40);
 
 let player2 = new Player({
   name: 'Player2',
+  isDie: true,
   keyboard: new Keyboard({up: 104, right: 102, down: 101, left: 100, defenseMode:39, ultraMode:13}),
   spells: data.spells.map( spell => new Spell(spell)),
   arrowManager: new ArrowManager({
@@ -154,7 +155,7 @@ let player2 = new Player({
       this.mode = 'attack';
     }
 
-    if (this.keyboard.isDown(this.keyboard.up) == null){
+    if (this.keyboard.isDown(this.keyboard.up)){
       if (this.mode == 'attack' && upArrow) {
         player1.takeDamage(2);
         this.currentEnergy += 5;
@@ -177,7 +178,7 @@ let player2 = new Player({
       }
     }
 
-    if (this.keyboard.isDown(this.keyboard.right) == null){
+    if (this.keyboard.isDown(this.keyboard.right)){
       if (this.mode == 'attack' && rightArrow) {
         player1.takeDamage(2);
         this.currentEnergy += 5;
@@ -200,7 +201,7 @@ let player2 = new Player({
       }
     }
 
-    if (this.keyboard.isDown(this.keyboard.down) == null){
+    if (this.keyboard.isDown(this.keyboard.down)){
       if (this.mode == 'attack' && downArrow) {
         player1.takeDamage(2);
         this.currentEnergy += 5;
@@ -223,7 +224,7 @@ let player2 = new Player({
       }
     }
 
-    if (this.keyboard.isDown(this.keyboard.left) == null){
+    if (this.keyboard.isDown(this.keyboard.left)){
       if (this.mode == 'attack' && leftArrow) {
         player1.takeDamage(2);
         this.currentEnergy += 5;

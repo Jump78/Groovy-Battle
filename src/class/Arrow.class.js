@@ -45,6 +45,13 @@ export default class {
     this.isDie = true;
   }
 
+  getCenter(){
+    return {
+      x: (this.coordinates.x + (this.coordinates.x + this.sprite.width))/2,
+      y: (this.coordinates.y + (this.coordinates.y + this.sprite.height))/2,
+    }
+  }
+
   render(ctx){
     if (this.renderOption) {
       this.renderOption(ctx);

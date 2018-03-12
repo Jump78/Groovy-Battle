@@ -100,8 +100,8 @@ export default class {
 
     const filterFunc = (arrow) => {
       return !arrow.isDie
-             && (arrow.maxCoordinates.y - arrow.coordinates.y) >= 0
-             && (arrow.maxCoordinates.y - arrow.coordinates.y) <= this.arrowHitboxRadius
+             && (arrow.maxCoordinates.y - (arrow.coordinates.y+arrow.sprite.height)) < this.arrowHitboxRadius
+             && (arrow.maxCoordinates.y - (arrow.coordinates.y+arrow.sprite.height)) >= -this.arrowHitboxRadius
     }
 
     let upArrow = this.arrowManager.getArrowIf('up', 1, filterFunc)[0];
