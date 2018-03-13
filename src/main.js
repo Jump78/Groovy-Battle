@@ -111,7 +111,7 @@ let player2 = new Player({
   //isDie: true,
   keyboard: new Keyboard({up: 104, right: 102, down: 101, left: 100, defenseMode:39, ultraMode:13}),
   spells: data.spells.map( spell => new Spell(spell)),
-  stats: new Statistique(),  
+  stats: new Statistique(),
   arrowManager: new ArrowManager({
     init(){
       let arrowDesti = arrowsBorderP2Generate.filter( arrow => arrow.direction == this.direction)[0];
@@ -154,6 +154,7 @@ let player2 = new Player({
 player2.arrowManager.generate({}, 40);
 
 player1.target = player2;
+player2.target = player1;
 
 
 GAME.scene.push(...arrowsBorderP1Generate);
