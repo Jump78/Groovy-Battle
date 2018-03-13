@@ -102,12 +102,14 @@ export default class {
     if (this.keyboard.isDown(this.keyboard.defenseMode)) {
       this.mode = 'defense';
     } else if (this.keyboard.isDown(this.keyboard.ultraMode)) {
+      this.defenseSuccess = false;
       this.mode = 'ultra';
       this.stats.decrease('energy', 1);
       if (this.stats.energy <= 0) {
         this.mode = 'attack';
       }
     } else {
+      this.defenseSuccess = false;
       this.mode = 'attack';
       this.cast(this.incantation);
       this.incantation = [];
