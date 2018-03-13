@@ -5,5 +5,5 @@ Projet libre de fin de la formation "developpeur multimedia" de l'Ecole Multimed
 ## Lancer le Projet
 
 1) `git clone git@github.com:Jump78/Groovy-Battle.git`
-2) npm install
-3) npm run dev
+2) `npm install`
+3) `npm run dev`
