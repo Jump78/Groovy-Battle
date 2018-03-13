@@ -84,7 +84,7 @@ export default class {
   }
 
   update() {
-    if (this.currentLife <= 0) {
+    if (this.stats.health <= 0) {
       this.isDie = true;
     }
 
