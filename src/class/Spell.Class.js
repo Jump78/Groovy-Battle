@@ -32,18 +32,18 @@ export default class {
   }
 
   increase(name, number){
-    return this[name] += number;
+    return this.effect[name] += number;
   }
 
   decrease(name, number){
-    return this[name] -= number;;
+    return this.effect[name] -= number;;
   }
 
   multiplicate(name, number){
-    return this[name] *= number;
+    return this.effect[name] *= number;
   }
 
   divide(name, number){
-    return this[name] /= number;;
+    return this.effect[name] /= number;;
   }
 }
