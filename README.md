@@ -1,6 +1,6 @@
 #Groovy Battle
 
-###Projet libre de fin de formation "developpeur multiemdia" de l'Ecole Multiemdia, session: 2017/2018
+###Projet libre de fin de formation "developpeur multimedia" de l'Ecole Multimedia, session: 2017/2018
 
 ##Lancer le Projet
 
