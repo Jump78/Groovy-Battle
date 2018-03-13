@@ -108,149 +108,30 @@ player1.arrowManager.generate({}, 40);
 
 let player2 = new Player({
   name: 'Player2',
-  isDie: true,
+  //isDie: true,
   keyboard: new Keyboard({up: 104, right: 102, down: 101, left: 100, defenseMode:39, ultraMode:13}),
   spells: data.spells.map( spell => new Spell(spell)),
+  stats: new Statistique(),  
   arrowManager: new ArrowManager({
     init(){
       let arrowDesti = arrowsBorderP2Generate.filter( arrow => arrow.direction == this.direction)[0];
-      this.maxCoordinates.y = arrowDesti.coordinates.y;
+      this.maxCoordinates.y = arrowDesti.getCenter().y;
       this.coordinates.x = arrowDesti.coordinates.x;
     },
     update(){
-      if (this.coordinates.y > this.maxCoordinates.y) {
+      if (this.coordinates.y > GAME.canvas.height()) {
         this.die();
       }
     }
   }),
   update() {
-    if (this.stats.health <= 0) {
-      this.isDie = true;
+    if (this.isDie) {
       message = "Player 1 win";
       return;
     }
 
-    let upArrow = this.arrowManager.getArrowIf('up', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
-    let rightArrow = this.arrowManager.getArrowIf('right', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
-    let downArrow = this.arrowManager.getArrowIf('down', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
-    let leftArrow = this.arrowManager.getArrowIf('left', 1, (arrow) => !arrow.isDie && (arrow.maxCoordinates.y - arrow.coordinates.y) < 15 )[0];
-
-    if (this.keyboard.isDown(this.keyboard.defenseMode)) {
-      this.mode = 'defense';
-    } else if (this.keyboard.isDown(this.keyboard.ultraMode)) {
-      this.mode = 'ultra';
-      this.stats.energy -= 1;
-      if (this.stats.energy <= 0) {
-        this.mode = 'attack';
-      }
-    } else {
-      let spell = this.spells.filter( spell => spell.incantation.toString() == this.incantation.toString())[0];
-      if (this.incantation.length > 0 && spell){
-        if (spell.self) {
-          this.attack(this, spell);
-        } else {
-          this.attack(player1, spell);
-        }
-        this.canAddIncantation = true;
-      }
-      this.incantation = [];
-      this.mode = 'attack';
-    }
-
-    if (this.keyboard.isDown(this.keyboard.up)){
-      if (this.mode == 'attack' && upArrow) {
-        player1.takeDamage(2);
-        this.stats.energy += 5;
-        if (this.stats.energy > this.stats.maxEnergy) {
-          this.stats.energy = this.stats.maxEnergy;
-        }
-        upArrow.die();
-      } else if (this.mode == 'ultra' && this.canAddIncantation) {
-        this.incantation.push('up');
-        this.canAddIncantation = false;
-        let self = this;
-        setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
-      } else if (this.mode == 'defense' && upArrow){
-        this.defenseSuccess = true;
-        this.stats.energy += 5;
-        if (this.stats.energy > this.stats.maxEnergy) {
-          this.stats.energy = this.stats.maxEnergy;
-        }
-        upArrow.die();
-      }
-    }
-
-    if (this.keyboard.isDown(this.keyboard.right)){
-      if (this.mode == 'attack' && rightArrow) {
-        player1.takeDamage(2);
-        this.stats.energy += 5;
-        if (this.stats.energy > this.stats.maxEnergy) {
-          this.stats.energy = this.stats.maxEnergy;
-        }
-        rightArrow.die();
-      } else if (this.mode == 'ultra' && this.canAddIncantation) {
-        this.incantation.push('right');
-        this.canAddIncantation = false;
-        let self = this;
-        setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
-      } else if (this.mode == 'defense' && rightArrow){
-        this.defenseSuccess = true;
-        this.stats.energy += 5;
-        if (this.stats.energy > this.stats.maxEnergy) {
-          this.stats.energy = this.stats.maxEnergy;
-        }
-        rightArrow.die();
-      }
-    }
-
-    if (this.keyboard.isDown(this.keyboard.down)){
-      if (this.mode == 'attack' && downArrow) {
-        player1.takeDamage(2);
-        this.stats.energy += 5;
-        if (this.stats.energy > this.stats.maxEnergy) {
-          this.stats.energy = this.stats.maxEnergy;
-        }
-        downArrow.die();
-      } else if (this.mode == 'ultra' && this.canAddIncantation) {
-        this.incantation.push('down');
-        this.canAddIncantation = false;
-        let self = this;
-        setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
-      } else if (this.mode == 'defense' && downArrow){
-        this.defenseSuccess = true;
-        this.stats.energy += 5;
-        if (this.stats.energy > this.stats.maxEnergy) {
-          this.stats.energy = this.stats.maxEnergy;
-        }
-        downArrow.die();
-      }
-    }
-
-    if (this.keyboard.isDown(this.keyboard.left)){
-      if (this.mode == 'attack' && leftArrow) {
-        player1.takeDamage(2);
-        this.stats.energy += 5;
-        if (this.stats.energy > this.stats.maxEnergy) {
-          this.stats.energy = this.stats.maxEnergy;
-        }
-        leftArrow.die();
-      } else if (this.mode == 'ultra' && this.canAddIncantation) {
-        this.incantation.push('left');
-        this.canAddIncantation = false;
-        let self = this;
-        setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
-      } else if (this.mode == 'defense' && leftArrow){
-        this.defenseSuccess = true;
-        this.stats.energy += 5;
-        if (this.stats.energy > this.stats.maxEnergy) {
-          this.stats.energy = this.stats.maxEnergy;
-        }
-        leftArrow.die();
-      }
-    }
-
     let currentTime = Date.now();
-    if ( currentTime - this.startAt >= 500 && !this.isUltraMode) {
+    if ( currentTime - this.startAt >= 1000 && this.mode != 'ultra') {
       this.startAt = currentTime;
       const direction = ['up', 'right', 'down', 'left'];
       let arrow = this.arrowManager.getArrow(direction[Math.floor(Math.random()*direction.length)], 1)[0]
