@@ -29,6 +29,7 @@ export default class {
     this.startAt = Date.now();
 
     this.arrowHitboxRadius = option.arrowHitboxRadius || 30;
+    this.critRange = option.critRange || 3;
   }
 
   takeDamage( damage ){
@@ -48,8 +49,14 @@ export default class {
     return realDamage;
   }
 
-  attack (target, spell){
+  attack (target, spell, crit){
+    if (crit) {
+      spell.multiplicate('damage', this.stats.criticalMultiplicator);
+    }
     spell.use(target);
+    if (crit) {
+      spell.divide('damage', this.stats.criticalMultiplicator);
+    }
   }
 
   defense () {
@@ -59,7 +66,12 @@ export default class {
 
   action (arrow, target, direction) {
     if (this.mode == 'attack' && arrow) {
-      this.attack(target, this.spells[0])
+      let isCrit = false;
+      if ( arrow.maxCoordinates.y - arrow.getCenter().y < this.critRange
+           && arrow.maxCoordinates.y - arrow.getCenter().y > -this.critRange ) {
+        isCrit = true;
+      }
+      this.attack(target, this.spells[0], isCrit)
       this.stats.increase('energy', 5);
       arrow.die();
     } else if (this.mode == 'ultra') {

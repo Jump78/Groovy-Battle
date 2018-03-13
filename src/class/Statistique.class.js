@@ -10,6 +10,7 @@ export default class {
 
     this.defense = option.defense || 40;
     this.damage = option.damage || 2;
+    this.criticalMultiplicator = option.criticalMultiplicator || 2.5;
     this.speed = 1;
   }
 
@@ -31,7 +32,7 @@ export default class {
     if ((this[minStat] != "undifined" || this[minStat] != null) && this[name] < this[minStat]) {
       this[name] = this[minStat];
     }
-    
+
     return this[name];
   }
 }

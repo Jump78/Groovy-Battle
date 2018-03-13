@@ -30,4 +30,20 @@ export default class {
       setTimeout(this.use, this.effect.delay, target);
     }
   }
+
+  increase(name, number){
+    return this[name] += number;
+  }
+
+  decrease(name, number){
+    return this[name] -= number;;
+  }
+
+  multiplicate(name, number){
+    return this[name] *= number;
+  }
+
+  divide(name, number){
+    return this[name] /= number;;
+  }
 }
