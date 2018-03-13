@@ -4,11 +4,8 @@ export default class {
   constructor( option = {} ) {
     this.name = option.name || 'Noname';
     this.isDie = option.isDie || false;
-    this.currentLife = option.life || 10;
-    this.maxLife = option.maxLife || 10;
 
-    this.currentEnergy = option.currentEnergy || 100;
-    this.maxEnergy = option.maxEnergy || 100;
+    this.stats = option.stats || {};
 
     this.spells = option.spells;
 
@@ -22,7 +19,6 @@ export default class {
     this.render = option.render || defaultFunc;
 
     this.mode = 'attack';
-    this.defenseStat = 40;
     this.defenseSuccess = false;
 
     this.isUltraMode = false;
@@ -39,11 +35,11 @@ export default class {
     let realDamage = damage;
 
     if (this.defenseSuccess) {
-      realDamage = damage / this.defenseStat;
+      realDamage = damage / this.stats.defense;
       this.defenseSuccess = false;
     }
 
-    this.currentLife -= realDamage;
+    this.stats.health -= realDamage;
 
     if (this.currentLife <= 0) {
       this.isDie = true;
@@ -58,19 +54,13 @@ export default class {
 
   defense () {
     this.defenseSuccess = true;
-    this.currentEnergy += 5;
-    if (this.currentEnergy > this.maxEnergy) {
-      this.currentEnergy = this.maxEnergy;
-    }
+    this.stats.increase('energy', 5);
   }
 
   action (arrow, target, direction) {
     if (this.mode == 'attack' && arrow) {
       this.attack(target, this.spells[0])
-      this.currentEnergy += 5;
-      if (this.currentEnergy > this.maxEnergy) {
-        this.currentEnergy = this.maxEnergy;
-      }
+      this.stats.increase('energy', 5);
       arrow.die();
     } else if (this.mode == 'ultra') {
       this.incantation.push(direction);
@@ -100,7 +90,7 @@ export default class {
 
     const filterFunc = (arrow) => {
       return !arrow.isDie
-             && (arrow.maxCoordinates.y - (arrow.coordinates.y+arrow.sprite.height)) < this.arrowHitboxRadius
+             && (arrow.maxCoordinates.y - (arrow.coordinates.y + arrow.sprite.height)) < this.arrowHitboxRadius
              && (arrow.maxCoordinates.y - arrow.coordinates.y) >= -this.arrowHitboxRadius
     }
 
@@ -113,8 +103,8 @@ export default class {
       this.mode = 'defense';
     } else if (this.keyboard.isDown(this.keyboard.ultraMode)) {
       this.mode = 'ultra';
-      this.currentEnergy -= 1;
-      if (this.currentEnergy <= 0) {
+      this.stats.decrease('energy', 1);
+      if (this.stats.energy <= 0) {
         this.mode = 'attack';
       }
     } else {

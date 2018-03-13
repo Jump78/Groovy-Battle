@@ -11,6 +11,7 @@ import ArrowManager from './class/ArrowManager.class';
 import Keyboard from './class/Keyboard.class';
 import Player from './class/Player.class';
 import Spell from './class/Spell.class';
+import Statistique from './class/Statistique.class';
 
 import data from './data.json';
 
@@ -63,6 +64,7 @@ let player1 = new Player({
   name: 'Player1',
   keyboard: new Keyboard(),
   spells: data.spells.map( spell => new Spell(spell)),
+  stats: new Statistique(),
   arrowManager: new ArrowManager({
     init(){
       let arrowDesti = arrowsBorderP1Generate.filter( arrow => arrow.direction == this.direction)[0];
@@ -93,9 +95,9 @@ let player1 = new Player({
   },
   render(ctx) {
     ctx.fillStyle = '#FF0000';
-    ctx.fillRect(0, 0 , 250*(this.currentLife/this.maxLife), 10);
+    ctx.fillRect(0, 0 , 250*(this.stats.health/this.stats.maxHealth), 10);
     ctx.fillStyle = '#0000FF';
-    ctx.fillRect(0, 10 , 150*(this.currentEnergy/this.maxEnergy), 10);
+    ctx.fillRect(0, 10 , 150*(this.stats.energy/this.stats.maxEnergy), 10);
     if (this.mode == 'defense') {
       ctx.fillStyle = '#F000FF';
       ctx.fillRect(0, 20 , 100, 10);
@@ -122,7 +124,7 @@ let player2 = new Player({
     }
   }),
   update() {
-    if (this.currentLife <= 0) {
+    if (this.stats.health <= 0) {
       this.isDie = true;
       message = "Player 1 win";
       return;
@@ -137,8 +139,8 @@ let player2 = new Player({
       this.mode = 'defense';
     } else if (this.keyboard.isDown(this.keyboard.ultraMode)) {
       this.mode = 'ultra';
-      this.currentEnergy -= 1;
-      if (this.currentEnergy <= 0) {
+      this.stats.energy -= 1;
+      if (this.stats.energy <= 0) {
         this.mode = 'attack';
       }
     } else {
@@ -158,9 +160,9 @@ let player2 = new Player({
     if (this.keyboard.isDown(this.keyboard.up)){
       if (this.mode == 'attack' && upArrow) {
         player1.takeDamage(2);
-        this.currentEnergy += 5;
-        if (this.currentEnergy > this.maxEnergy) {
-          this.currentEnergy = this.maxEnergy;
+        this.stats.energy += 5;
+        if (this.stats.energy > this.stats.maxEnergy) {
+          this.stats.energy = this.stats.maxEnergy;
         }
         upArrow.die();
       } else if (this.mode == 'ultra' && this.canAddIncantation) {
@@ -170,9 +172,9 @@ let player2 = new Player({
         setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
       } else if (this.mode == 'defense' && upArrow){
         this.defenseSuccess = true;
-        this.currentEnergy += 5;
-        if (this.currentEnergy > this.maxEnergy) {
-          this.currentEnergy = this.maxEnergy;
+        this.stats.energy += 5;
+        if (this.stats.energy > this.stats.maxEnergy) {
+          this.stats.energy = this.stats.maxEnergy;
         }
         upArrow.die();
       }
@@ -181,9 +183,9 @@ let player2 = new Player({
     if (this.keyboard.isDown(this.keyboard.right)){
       if (this.mode == 'attack' && rightArrow) {
         player1.takeDamage(2);
-        this.currentEnergy += 5;
-        if (this.currentEnergy > this.maxEnergy) {
-          this.currentEnergy = this.maxEnergy;
+        this.stats.energy += 5;
+        if (this.stats.energy > this.stats.maxEnergy) {
+          this.stats.energy = this.stats.maxEnergy;
         }
         rightArrow.die();
       } else if (this.mode == 'ultra' && this.canAddIncantation) {
@@ -193,9 +195,9 @@ let player2 = new Player({
         setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
       } else if (this.mode == 'defense' && rightArrow){
         this.defenseSuccess = true;
-        this.currentEnergy += 5;
-        if (this.currentEnergy > this.maxEnergy) {
-          this.currentEnergy = this.maxEnergy;
+        this.stats.energy += 5;
+        if (this.stats.energy > this.stats.maxEnergy) {
+          this.stats.energy = this.stats.maxEnergy;
         }
         rightArrow.die();
       }
@@ -204,9 +206,9 @@ let player2 = new Player({
     if (this.keyboard.isDown(this.keyboard.down)){
       if (this.mode == 'attack' && downArrow) {
         player1.takeDamage(2);
-        this.currentEnergy += 5;
-        if (this.currentEnergy > this.maxEnergy) {
-          this.currentEnergy = this.maxEnergy;
+        this.stats.energy += 5;
+        if (this.stats.energy > this.stats.maxEnergy) {
+          this.stats.energy = this.stats.maxEnergy;
         }
         downArrow.die();
       } else if (this.mode == 'ultra' && this.canAddIncantation) {
@@ -216,9 +218,9 @@ let player2 = new Player({
         setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
       } else if (this.mode == 'defense' && downArrow){
         this.defenseSuccess = true;
-        this.currentEnergy += 5;
-        if (this.currentEnergy > this.maxEnergy) {
-          this.currentEnergy = this.maxEnergy;
+        this.stats.energy += 5;
+        if (this.stats.energy > this.stats.maxEnergy) {
+          this.stats.energy = this.stats.maxEnergy;
         }
         downArrow.die();
       }
@@ -227,9 +229,9 @@ let player2 = new Player({
     if (this.keyboard.isDown(this.keyboard.left)){
       if (this.mode == 'attack' && leftArrow) {
         player1.takeDamage(2);
-        this.currentEnergy += 5;
-        if (this.currentEnergy > this.maxEnergy) {
-          this.currentEnergy = this.maxEnergy;
+        this.stats.energy += 5;
+        if (this.stats.energy > this.stats.maxEnergy) {
+          this.stats.energy = this.stats.maxEnergy;
         }
         leftArrow.die();
       } else if (this.mode == 'ultra' && this.canAddIncantation) {
@@ -239,9 +241,9 @@ let player2 = new Player({
         setTimeout(_ => self.canAddIncantation = true, this.globalCooldown);
       } else if (this.mode == 'defense' && leftArrow){
         this.defenseSuccess = true;
-        this.currentEnergy += 5;
-        if (this.currentEnergy > this.maxEnergy) {
-          this.currentEnergy = this.maxEnergy;
+        this.stats.energy += 5;
+        if (this.stats.energy > this.stats.maxEnergy) {
+          this.stats.energy = this.stats.maxEnergy;
         }
         leftArrow.die();
       }
@@ -259,9 +261,9 @@ let player2 = new Player({
   },
   render(ctx) {
     ctx.fillStyle = '#FF0000';
-    ctx.fillRect(GAME.canvas.parent().width(), 0 , -250*(this.currentLife/this.maxLife), 10);
+    ctx.fillRect(GAME.canvas.parent().width(), 0 , -250*(this.stats.health/this.stats.maxHealth), 10);
     ctx.fillStyle = '#0000FF';
-    ctx.fillRect(GAME.canvas.parent().width(), 10 , -150*(this.currentEnergy/this.maxEnergy), 10);
+    ctx.fillRect(GAME.canvas.parent().width(), 10 , -150*(this.stats.energy/this.stats.maxEnergy), 10);
     if (this.mode == 'defense') {
       ctx.fillStyle = '#F000FF';
       ctx.fillRect(GAME.canvas.parent().width(), 20 , -100, 10);
