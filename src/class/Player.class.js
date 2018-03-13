@@ -50,13 +50,7 @@ export default class {
   }
 
   attack (target, spell, crit){
-    if (crit) {
-      spell.multiplicate('damage', this.stats.criticalMultiplicator);
-    }
-    spell.use(target);
-    if (crit) {
-      spell.divide('damage', this.stats.criticalMultiplicator);
-    }
+    spell.use(target, this.stats, crit);
   }
 
   defense () {
