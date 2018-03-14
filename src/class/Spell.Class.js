@@ -11,8 +11,8 @@ export default class {
   use (target, statBonus, crit){
     if (this.effect.damage > 0) {
       let multiplicator = crit? statBonus.criticalMultiplicator : 1;
-
-      target.takeDamage(this.effect.damage * (statBonus.damage * 0.25) * multiplicator );
+      let damage = this.effect.damage + (this.effect.damage * (statBonus.damage * 0.05));
+      target.takeDamage(damage * multiplicator );
     }
 
     if (this.effect.energyRestore > 0) {
@@ -38,7 +38,7 @@ export default class {
   }
 
   decrease(name, number){
-    return this.effect[name] -= number;;
+    return this.effect[name] -= number;
   }
 
   multiplicate(name, number){
@@ -46,6 +46,6 @@ export default class {
   }
 
   divide(name, number){
-    return this.effect[name] /= number;;
+    return this.effect[name] /= number;
   }
 }
