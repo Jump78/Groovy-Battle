@@ -23,7 +23,7 @@ const GAME = new Game({
   canvas: $('#game')
 })
 
-var message = '';
+let message = '';
 
 let arrowsBorderP1Generate = directions.map( (direction, index) => {
   return new Arrow({
@@ -78,10 +78,7 @@ let player1 = new Player({
     }
   }),
   update() {
-    if (this.isDie) {
-      message = "Player 2 win";
-      return;
-    }
+    if (this.isDie) return;
 
     let currentTime = Date.now();
     if ( currentTime - this.startAt >= 1000 && this.mode != 'ultra') {
@@ -108,7 +105,7 @@ player1.arrowManager.generate({}, 40);
 
 let player2 = new Player({
   name: 'Player2',
-  //isDie: true,
+  // isDie: true,
   keyboard: new Keyboard({up: 104, right: 102, down: 101, left: 100, defenseMode:39, ultraMode:13}),
   spells: data.spells.map( spell => new Spell(spell)),
   stats: new Statistique(),
@@ -125,10 +122,7 @@ let player2 = new Player({
     }
   }),
   update() {
-    if (this.isDie) {
-      message = "Player 1 win";
-      return;
-    }
+    if (this.isDie) return;
 
     let currentTime = Date.now();
     if ( currentTime - this.startAt >= 1000 && this.mode != 'ultra') {
@@ -156,7 +150,15 @@ player2.arrowManager.generate({}, 40);
 player1.target = player2;
 player2.target = player1;
 
-
+GAME.update = () => {
+  if (player1.isDie && player2.isDie) {
+    message = "Egalité";
+  } else if (player1.isDie) {
+    message = player2.name + " win";
+  } else if (player2.isDie) {
+    message = player1.name + " win";
+  }
+}
 GAME.scene.push(...arrowsBorderP1Generate);
 GAME.scene.push(...arrowsBorderP2Generate);
 GAME.scene.push(player1);

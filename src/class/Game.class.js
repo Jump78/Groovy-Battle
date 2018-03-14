@@ -1,5 +1,7 @@
 import $ from 'jquery';
 
+const defaultFunc = () => {};
+
 export default class {
   constructor( option ) {
     //Canvas
@@ -13,9 +15,11 @@ export default class {
     //Scene
     this.scene = option.scene || [];
 
-    this.arrowsPull = option.arrowsPull || []
+    this.arrowsPull = option.arrowsPull || [];
 
     this.arrowManager = option.arrowManager || {};
+
+    this.update = option.update || defaultFunc;
 
     this.startAt = Date.now();
   }
@@ -39,6 +43,8 @@ export default class {
       item.update();
       if (item.isDie) self.scene.splice(self.scene.indexOf(item), 1)
     })
+
+    this.update();
 
     requestAnimationFrame(this.gameloop.bind(this));
   }
