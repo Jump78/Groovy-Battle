@@ -5,6 +5,11 @@ import rightArrowBorderImg from "./assets/img/arrowRightBorder.png";
 import downArrowBorderImg from "./assets/img/arrowDownBorder.png";
 import leftArrowBorderImg from "./assets/img/arrowLeftBorder.png";
 
+import guardArrowDown from "./assets/img/guardArrowDown.png";
+import guardArrowLeft from "./assets/img/guardArrowLeft.png";
+import guardArrowUp from "./assets/img/guardArrowUp.png";
+import guardArrowRight from "./assets/img/guardArrowRight.png";
+
 import Game from './class/Game.class';
 import Arrow from './class/Arrow.class';
 import ArrowManager from './class/ArrowManager.class';
@@ -17,6 +22,7 @@ import data from './data.json';
 
 
 const arrowSprite = {upArrowBorderImg, rightArrowBorderImg, downArrowBorderImg, leftArrowBorderImg};
+const guardArrowSprite = {guardArrowDown, guardArrowLeft, guardArrowUp, guardArrowRight};
 const directions = ['left', 'up', 'down', 'right'];
 
 const GAME = new Game({
@@ -26,38 +32,74 @@ const GAME = new Game({
 let message = '';
 
 let arrowsBorderP1Generate = directions.map( (direction, index) => {
-  return new Arrow({
+  let sprite = new Image(); // Create new image
+  sprite.src = arrowSprite[direction+'ArrowBorderImg']; // Set the image's source
+
+  let guardSprite = new Image(); // Create new image
+  guardSprite.src = guardArrowSprite['guardArrow'+direction.replace(direction[0], direction[0].toUpperCase())]; // Set the image's source
+
+  return {
     direction: direction,
     isDie: false,
     coordinates: {
       x:50*(index),
       y:200
     },
-    sprite: arrowSprite[direction+'ArrowBorderImg'],
+    sprite: sprite,
+    guardSprite: guardSprite,
     render(ctx){
-      ctx.beginPath();
-      ctx.arc((this.coordinates.x+(this.coordinates.x+this.sprite.width))/2,
-              (this.coordinates.y+(this.coordinates.y+this.sprite.height))/2,
-              player1.arrowHitboxRadius,
-              0,
-              Math.PI*2,
-              true
-            );
-      ctx.fill();
-      ctx.closePath();
+      if (player1.mode == 'defense') {
+        ctx.drawImage(this.guardSprite, this.coordinates.x,this.coordinates.y);
+      }
+      ctx.drawImage(this.sprite, this.coordinates.x,this.coordinates.y);
+    },
+
+    update(){
+
+    },
+
+    getCenter(){
+      return {
+        x: (this.coordinates.x + (this.coordinates.x + this.sprite.width))/2,
+        y: (this.coordinates.y + (this.coordinates.y + this.sprite.height))/2,
+      }
     }
-  });
+  };
 })
 let arrowsBorderP2Generate = directions.map( (direction, index) => {
-  return new Arrow({
+  let sprite = new Image(); // Create new image
+  sprite.src = arrowSprite[direction+'ArrowBorderImg']; // Set the image's source
+
+  let guardSprite = new Image(); // Create new image
+  guardSprite.src = guardArrowSprite['guardArrow'+direction.replace(direction[0], direction[0].toUpperCase())]; // Set the image's source
+
+  return {
     direction: direction,
     isDie: false,
     coordinates: {
       x: GAME.canvas.parent().width() - (50*(directions.length-index)),
       y:200
     },
-    sprite: arrowSprite[direction+'ArrowBorderImg']
-  });
+    sprite: sprite,
+    guardSprite: guardSprite,
+    render(ctx){
+      if (player2.mode == 'defense') {
+        ctx.drawImage(this.guardSprite, this.coordinates.x,this.coordinates.y);
+      }
+      ctx.drawImage(this.sprite, this.coordinates.x,this.coordinates.y);
+    },
+
+    update(){
+
+    },
+
+    getCenter(){
+      return {
+        x: (this.coordinates.x + (this.coordinates.x + this.sprite.width))/2,
+        y: (this.coordinates.y + (this.coordinates.y + this.sprite.height))/2,
+      }
+    }
+  };
 })
 
 let player1 = new Player({
@@ -95,10 +137,6 @@ let player1 = new Player({
     ctx.fillRect(0, 0 , 250*(this.stats.health/this.stats.maxHealth), 10);
     ctx.fillStyle = '#0000FF';
     ctx.fillRect(0, 10 , 150*(this.stats.energy/this.stats.maxEnergy), 10);
-    if (this.mode == 'defense') {
-      ctx.fillStyle = '#F000FF';
-      ctx.fillRect(0, 20 , 100, 10);
-    }
   }
 })
 player1.arrowManager.generate({}, 40);
@@ -139,10 +177,6 @@ let player2 = new Player({
     ctx.fillRect(GAME.canvas.parent().width(), 0 , -250*(this.stats.health/this.stats.maxHealth), 10);
     ctx.fillStyle = '#0000FF';
     ctx.fillRect(GAME.canvas.parent().width(), 10 , -150*(this.stats.energy/this.stats.maxEnergy), 10);
-    if (this.mode == 'defense') {
-      ctx.fillStyle = '#F000FF';
-      ctx.fillRect(GAME.canvas.parent().width(), 20 , -100, 10);
-    }
   }
 })
 player2.arrowManager.generate({}, 40);
