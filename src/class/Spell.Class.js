@@ -16,15 +16,16 @@ export default class {
     }
 
     if (this.effect.energyRestore > 0) {
-      target.currentEnergy += this.effect.energyRestore;
+      target.stats.increase('energy', this.effect.energyRestore);
+
     }
 
     if (this.effect.healthRestore > 0) {
-      target.currentLife += this.effect.healthRestore;
+      target.stats.increase('health', this.effect.healthRestore);
     }
 
     if (this.effect.speed != 1) {
-      target.speed *= this.effect.speed
+      target.stats.increase('speed', this.effect.speed);
     }
 
     if(this.effect.repeat > 0){
