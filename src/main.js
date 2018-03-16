@@ -10,6 +10,8 @@ import guardArrowLeft from "./assets/img/guardArrowLeft.png";
 import guardArrowUp from "./assets/img/guardArrowUp.png";
 import guardArrowRight from "./assets/img/guardArrowRight.png";
 
+import ultraModeImage from "./assets/img/ultraMode.png";
+
 import Game from './class/Game.class';
 import Arrow from './class/Arrow.class';
 import ArrowManager from './class/ArrowManager.class';
@@ -24,6 +26,9 @@ import data from './data.json';
 const arrowSprite = {upArrowBorderImg, rightArrowBorderImg, downArrowBorderImg, leftArrowBorderImg};
 const guardArrowSprite = {guardArrowDown, guardArrowLeft, guardArrowUp, guardArrowRight};
 const directions = ['left', 'up', 'down', 'right'];
+
+const ultraModeSprite = new Image(); // Create new image
+ultraModeSprite.src = ultraModeImage; // Set the image's source
 
 const GAME = new Game({
   canvas: $('#game')
@@ -51,7 +56,10 @@ let arrowsBorderP1Generate = directions.map( (direction, index) => {
       if (player1.mode == 'defense') {
         ctx.drawImage(this.guardSprite, this.coordinates.x,this.coordinates.y);
       }
-      ctx.drawImage(this.sprite, this.coordinates.x,this.coordinates.y);
+
+      if (player1.mode != 'ultra') {
+        ctx.drawImage(this.sprite, this.coordinates.x,this.coordinates.y);
+      }
     },
 
     update(){
@@ -137,6 +145,15 @@ let player1 = new Player({
     ctx.fillRect(0, 0 , 250*(this.stats.health/this.stats.maxHealth), 10);
     ctx.fillStyle = '#0000FF';
     ctx.fillRect(0, 10 , 150*(this.stats.energy/this.stats.maxEnergy), 10);
+
+    if (this.mode == 'ultra') {
+      ctx.drawImage(ultraModeSprite, 0, 50);
+
+      this.incantation.forEach( (direction, index) => {
+        let arrow = arrowsBorderP1Generate.filter( arrow => direction == arrow.direction)[0];
+        ctx.drawImage(arrow.sprite, index*50, 50);
+      })
+    }
   }
 })
 player1.arrowManager.generate({}, 40);
