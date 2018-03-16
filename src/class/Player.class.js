@@ -49,8 +49,8 @@ export default class {
     return realDamage;
   }
 
-  attack (target, spell, crit){
-    spell.use(target, this.stats, crit);
+  attack (target, spell, isCrit){
+    spell.use(target, this.stats, isCrit);
   }
 
   defense () {
