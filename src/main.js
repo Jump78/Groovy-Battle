@@ -19,9 +19,14 @@ import Keyboard from './class/Keyboard.class';
 import Player from './class/Player.class';
 import Spell from './class/Spell.class';
 import Statistique from './class/Statistique.class';
+import Audio from './class/Audio.class';
 
 import data from './data.json';
+import song from './assets/song/UnexpectedVibes.mp3';
 
+let audioAnalyser = new Audio();
+
+audioAnalyser.loadSound({battleSong: song});
 
 const arrowSprite = {upArrowBorderImg, rightArrowBorderImg, downArrowBorderImg, leftArrowBorderImg};
 const guardArrowSprite = {guardArrowDown, guardArrowLeft, guardArrowUp, guardArrowRight};
