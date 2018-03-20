@@ -15,27 +15,18 @@ export default class {
     //Scene
     this.scene = option.scene || [];
 
-    this.arrowsPull = option.arrowsPull || [];
-
-    this.arrowManager = option.arrowManager || {};
-
+    this.initCustom = option.init || defaultFunc;
     this.update = option.update || defaultFunc;
 
     this.startAt = Date.now();
   }
 
+  init () {
+    this.initCustom();
+  }
+
   gameloop () {
     this.context.clearRect(0, 0, this.canvas.width(), this.canvas.height());
-    // let currentTime = Date.now();
-    //
-    // if ( currentTime - this.startAt >= 500) {
-    //   this.startAt = currentTime;
-    //   const direction = ['up', 'right', 'down', 'left'];
-    //   let arrow = this.arrowManager.getArrow(direction[Math.floor(Math.random()*direction.length)], 1)[0]
-    //   arrow.init();
-    //   arrow.velocity.y = 2;
-    //   this.scene.push(arrow);
-    // }
 
     let self = this;
     this.scene.forEach( item => {
