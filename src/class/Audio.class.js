@@ -6,8 +6,10 @@ export default class {
 
       this.audioCtx = new AudioContext();
 
+      this.sources = [];
+      this.playingSource = [];
+
       this.analyseur = this.audioCtx.createAnalyser();
-      this.analyseur.fftSize = 2048;
 
       this.bufferLength = this.analyseur.frequencyBinCount;
       this.dataArray = new Uint8Array(this.bufferLength);
@@ -17,26 +19,40 @@ export default class {
 
     loadSound (urls) {
 
-      this.bufferLoader.load(urls, () => console.log(this.bufferLoader.isAllLoaded()));
+      this.bufferLoader.load(urls, () => {console.log(this.bufferLoader.bufferList)});
 
     }
 
     //playing the audio file
-    playSound (name, loop) {
+    playSound (name) {
+      if (this.playingSource.indexOf(name) >= 0) return;
+
       //creating source node
       let source = this.audioCtx.createBufferSource();
-
       //passing in file
-      source.buffer = this.bufferLoader[name];
-      source.loop = (loop)? loop : false;
+      source.buffer = this.bufferLoader.bufferList[name];
+      source.loop = true;
       //start playing
       source.connect(this.analyseur);
       this.analyseur.connect(this.audioCtx.destination);  // added
       source.start(0);
+      this.playingSource.push(name);
     }
 
     getByteFrequencyData () {
       this.analyseur.getByteFrequencyData(this.dataArray);
-      return this.dataArray;
+      let self = this;
+      let freq = [];
+      this.dataArray.forEach( (item, i) => {
+        if (item > 0) {
+          return freq.push({
+            frequency: (i * self.audioCtx.sampleRate/self.analyseur.fftSize),
+            intensity : item
+          })
+        }
+        return false;
+      });
+
+      return freq;
     }
 }
