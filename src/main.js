@@ -23,10 +23,11 @@ import Audio from './class/Audio.class';
 
 import data from './data.json';
 import song from './assets/song/UnexpectedVibes.mp3';
+import pure from './assets/song/signal_pure.mp3';
 
 let audioAnalyser = new Audio();
 
-audioAnalyser.loadSound({battleSong: song});
+audioAnalyser.loadSound({battleSong: song, pure});
 
 const arrowSprite = {upArrowBorderImg, rightArrowBorderImg, downArrowBorderImg, leftArrowBorderImg};
 const guardArrowSprite = {guardArrowDown, guardArrowLeft, guardArrowUp, guardArrowRight};
@@ -115,6 +116,7 @@ let arrowsBorderP2Generate = directions.map( (direction, index) => {
   };
 })
 
+let test = 0;
 let player1 = new Player({
   name: 'Player1',
   keyboard: new Keyboard(),
@@ -134,6 +136,16 @@ let player1 = new Player({
   }),
   update() {
     if (this.isDie) return;
+    // if (test < 250) {
+    //   console.log(test);
+    // }
+    // if (audioAnalyser.playingSource.indexOf('battleSong') >= 0 && (test == 250 || test == 500 || test == 1000 || test == 2500 || test == 5000)) {
+    //   let a = audioAnalyser.getByteFrequencyData();
+    //   console.log('-------' +test+ '------');
+    //   console.log(a);
+    //   console.log(a.sort((a, b) => b.frequency - a.frequency))
+    // }
+    // test++;
 
     let currentTime = Date.now();
     if ( currentTime - this.startAt >= 1000 && this.mode != 'ultra') {
@@ -213,6 +225,10 @@ GAME.update = () => {
     message = player2.name + " win";
   } else if (player2.isDie) {
     message = player1.name + " win";
+  }
+
+  if (audioAnalyser.bufferLoader.isAllLoaded()) {
+    audioAnalyser.playSound('battleSong');
   }
 }
 GAME.scene.push(...arrowsBorderP1Generate);
