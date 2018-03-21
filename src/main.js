@@ -24,6 +24,7 @@ import Spell from './class/Spell.class';
 import Statistique from './class/Statistique.class';
 import Audio from './class/Audio.class';
 import Tileset from './class/Tileset.class';
+import HUD from './class/HUD.class';
 
 import data from './data.json';
 import song from './assets/song/UnexpectedVibes.mp3';
@@ -127,6 +128,7 @@ let player1 = new Player({
   spells: data.spells.map( spell => new Spell(spell)),
   stats: new Statistique(),
   scale: {x:-1.5, y:1.5},
+  hud: new HUD(),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({
     init(){
@@ -166,10 +168,9 @@ let player1 = new Player({
   render(ctx) {
     this.spritesheet.play(this.currentAnimation, 100, 250, this.scale, true);
 
-    ctx.fillStyle = '#FF0000';
-    ctx.fillRect(0, 0 , 250*(this.stats.health/this.stats.maxHealth), 10);
-    ctx.fillStyle = '#0000FF';
-    ctx.fillRect(0, 10 , 150*(this.stats.energy/this.stats.maxEnergy), 10);
+    this.hud.healthBar.width = this.hud.healthBar.baseWidth * (this.stats.health/this.stats.maxHealth);
+    this.hud.energyBar.width = this.hud.energyBar.baseWidth * (this.stats.energy/this.stats.maxEnergy);
+    this.hud.render(ctx);
 
     if (this.mode == 'ultra') {
       ctx.drawImage(ultraModeSprite, 0, 50);

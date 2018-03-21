@@ -10,6 +10,8 @@ export default class {
     this.animSpeed = 5;
     this.currentAnimation = 'idle';
 
+    this.hud = option.hud || {};
+
     this.stats = option.stats || {};
 
     this.spells = option.spells;
