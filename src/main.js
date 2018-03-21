@@ -11,6 +11,7 @@ import guardArrowUp from "./assets/img/guardArrowUp.png";
 import guardArrowRight from "./assets/img/guardArrowRight.png";
 
 import ultraModeImage from "./assets/img/ultraMode.png";
+import background from "./assets/img/background.jpg";
 
 import playerSpritesheetImg from "./assets/img/warrior-sprite-sheet.png";
 import playerSpritesheetJson from "./assets/img/warrior-sprite-sheet.json";
@@ -40,6 +41,9 @@ const directions = ['left', 'up', 'down', 'right'];
 
 const ultraModeSprite = new Image();
 ultraModeSprite.src = ultraModeImage;
+
+const backgroundSprite = new Image();
+backgroundSprite.src = background;
 
 const GAME = new Game({
   canvas: $('#game')
@@ -125,14 +129,33 @@ let test = 0;
 let player1 = new Player({
   name: 'Player1',
   coordinates: {
-    x: 100,
-    y: 250
+    x: 300,
+    y: 300
   },
   keyboard: new Keyboard(),
   spells: data.spells.map( spell => new Spell(spell)),
   stats: new Statistique(),
   scale: {x:-1.5, y:1.5},
-  hud: new HUD(),
+  hud: new HUD({
+    healthBar:{
+      x: 20,
+      y: 10,
+      width: 250,
+      baseWidth: 250,
+      height: 10,
+      baseHeight: 10,
+      color: '#FF0000'
+    },
+    energyBar:{
+      x: 20,
+      y: 20,
+      width: 150,
+      baseWidth: 150,
+      height: 10,
+      baseHeight: 10,
+      color: '#0000FF'
+    }
+  }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({
     init(){
@@ -186,8 +209,8 @@ let player2 = new Player({
   name: 'Player2',
   // isDie: true,
   coordinates: {
-    x: GAME.canvas.parent().width() - 400,
-    y: 250
+    x: GAME.canvas.parent().width() - 700,
+    y: 300
   },
   keyboard: new Keyboard({up: 104, right: 102, down: 101, left: 100, defenseMode:39, ultraMode:13}),
   spells: data.spells.map( spell => new Spell(spell)),
@@ -196,8 +219,8 @@ let player2 = new Player({
   hud: new HUD({
     scale: -1,
     healthBar:{
-      x: GAME.canvas.parent().width(),
-      y: 0,
+      x: GAME.canvas.parent().width() - 20,
+      y: 10,
       width: 250,
       baseWidth: 250,
       height: 10,
@@ -205,10 +228,10 @@ let player2 = new Player({
       color: '#FF0000'
     },
     energyBar:{
-      x: GAME.canvas.parent().width(),
-      y: 10,
-      width: 250,
-      baseWidth: 250,
+      x: GAME.canvas.parent().width()-20,
+      y: 20,
+      width: 150,
+      baseWidth: 150,
       height: 10,
       baseHeight: 10,
       color: '#0000FF'
@@ -270,10 +293,13 @@ GAME.update = () => {
     audioAnalyser.playSound('battleSong');
   }
 }
-GAME.scene.push(...arrowsBorderP1Generate);
-GAME.scene.push(...arrowsBorderP2Generate);
-GAME.scene.push(player1);
-GAME.scene.push(player2);
+
+GAME.scene.push({
+  render(ctx) {
+    ctx.drawImage(backgroundSprite, 0, 0, GAME.canvas.width(), GAME.canvas.height());
+  },
+  update(){}
+});
 GAME.scene.push({
   render(ctx) {
     ctx.fillStyle = '#FF0000';
@@ -283,4 +309,8 @@ GAME.scene.push({
   },
   update(){}
 });
+GAME.scene.push(...arrowsBorderP1Generate);
+GAME.scene.push(...arrowsBorderP2Generate);
+GAME.scene.push(player1);
+GAME.scene.push(player2);
 GAME.gameloop();
