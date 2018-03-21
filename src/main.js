@@ -10,10 +10,10 @@ import guardArrowLeft from "./assets/img/guardArrowLeft.png";
 import guardArrowUp from "./assets/img/guardArrowUp.png";
 import guardArrowRight from "./assets/img/guardArrowRight.png";
 
+import ultraModeImage from "./assets/img/ultraMode.png";
+
 import playerSpritesheetImg from "./assets/img/warrior-sprite-sheet.png";
 import playerSpritesheetJson from "./assets/img/warrior-sprite-sheet.json";
-
-import ultraModeImage from "./assets/img/ultraMode.png";
 
 import Game from './class/Game.class';
 import Arrow from './class/Arrow.class';
@@ -38,8 +38,8 @@ const arrowSprite = {upArrowBorderImg, rightArrowBorderImg, downArrowBorderImg, 
 const guardArrowSprite = {guardArrowDown, guardArrowLeft, guardArrowUp, guardArrowRight};
 const directions = ['left', 'up', 'down', 'right'];
 
-const ultraModeSprite = new Image(); // Create new image
-ultraModeSprite.src = ultraModeImage; // Set the image's source
+const ultraModeSprite = new Image();
+ultraModeSprite.src = ultraModeImage;
 
 const GAME = new Game({
   canvas: $('#game')
@@ -124,6 +124,10 @@ let arrowsBorderP2Generate = directions.map( (direction, index) => {
 let test = 0;
 let player1 = new Player({
   name: 'Player1',
+  coordinates: {
+    x: 100,
+    y: 250
+  },
   keyboard: new Keyboard(),
   spells: data.spells.map( spell => new Spell(spell)),
   stats: new Statistique(),
@@ -165,13 +169,7 @@ let player1 = new Player({
       GAME.scene.push(arrow);
     }
   },
-  render(ctx) {
-    this.spritesheet.play(this.currentAnimation, 100, 250, this.scale, true);
-
-    this.hud.healthBar.width = this.hud.healthBar.baseWidth * (this.stats.health/this.stats.maxHealth);
-    this.hud.energyBar.width = this.hud.energyBar.baseWidth * (this.stats.energy/this.stats.maxEnergy);
-    this.hud.render(ctx);
-
+  render (ctx) {
     if (this.mode == 'ultra') {
       ctx.drawImage(ultraModeSprite, 0, 50);
 
@@ -180,7 +178,6 @@ let player1 = new Player({
         ctx.drawImage(arrow.sprite, index*50, 50);
       });
     }
-
   }
 })
 player1.arrowManager.generate({}, 40);
@@ -188,9 +185,36 @@ player1.arrowManager.generate({}, 40);
 let player2 = new Player({
   name: 'Player2',
   // isDie: true,
+  coordinates: {
+    x: GAME.canvas.parent().width() - 400,
+    y: 250
+  },
   keyboard: new Keyboard({up: 104, right: 102, down: 101, left: 100, defenseMode:39, ultraMode:13}),
   spells: data.spells.map( spell => new Spell(spell)),
   stats: new Statistique(),
+  scale: {x:1.5, y:1.5},
+  hud: new HUD({
+    scale: -1,
+    healthBar:{
+      x: GAME.canvas.parent().width(),
+      y: 0,
+      width: 250,
+      baseWidth: 250,
+      height: 10,
+      baseHeight: 10,
+      color: '#FF0000'
+    },
+    energyBar:{
+      x: GAME.canvas.parent().width(),
+      y: 10,
+      width: 250,
+      baseWidth: 250,
+      height: 10,
+      baseHeight: 10,
+      color: '#0000FF'
+    }
+  }),
+  spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({
     init(){
       let arrowDesti = arrowsBorderP2Generate.filter( arrow => arrow.direction == this.direction)[0];
@@ -216,12 +240,17 @@ let player2 = new Player({
       GAME.scene.push(arrow);
     }
   },
-  render(ctx) {
-    ctx.fillStyle = '#FF0000';
-    ctx.fillRect(GAME.canvas.parent().width(), 0 , -250*(this.stats.health/this.stats.maxHealth), 10);
-    ctx.fillStyle = '#0000FF';
-    ctx.fillRect(GAME.canvas.parent().width(), 10 , -150*(this.stats.energy/this.stats.maxEnergy), 10);
+  render (ctx) {
+    if (this.mode == 'ultra') {
+      ctx.drawImage(ultraModeSprite, GAME.canvas.parent().width(), 50, -ultraModeSprite.width, ultraModeSprite.height);
+
+      this.incantation.forEach( (direction, index) => {
+        let arrow = arrowsBorderP2Generate.filter( arrow => direction == arrow.direction)[0];
+        ctx.drawImage(arrow.sprite, GAME.canvas.parent().width() - (50*(this.incantation.length-index)) , 50);
+      });
+    }
   }
+
 })
 player2.arrowManager.generate({}, 40);
 

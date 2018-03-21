@@ -5,6 +5,8 @@ export default class {
     this.name = option.name || 'Noname';
     this.isDie = option.isDie || false;
 
+    this.coordinates = option.coordinates || {x:0, y:0};
+
     this.scale = option.scale || {x: 1, y: 1};
     this.spritesheet = option.spritesheet || null;
     this.animSpeed = 5;
@@ -23,7 +25,7 @@ export default class {
     this.arrowManager = option.arrowManager || {};
 
     this.updateCustom = option.update || defaultFunc;
-    this.render = option.render || defaultFunc;
+    this.renderCustom = option.render || defaultFunc;
 
     this.mode = 'idle';
     this.defenseSuccess = false;
@@ -161,4 +163,17 @@ export default class {
       this.updateCustom();
     }
   }
+
+  render(ctx) {
+    this.spritesheet.play(this.currentAnimation, this.coordinates.x, this.coordinates.y, this.scale, true);
+
+    this.hud.healthBar.width = this.hud.healthBar.baseWidth * (this.stats.health/this.stats.maxHealth);
+    this.hud.energyBar.width = this.hud.energyBar.baseWidth * (this.stats.energy/this.stats.maxEnergy);
+    this.hud.render(ctx);
+
+    if (this.renderCustom) {
+      this.renderCustom(ctx);
+    }
+  }
+
 }
