@@ -5,6 +5,11 @@ export default class {
     this.name = option.name || 'Noname';
     this.isDie = option.isDie || false;
 
+    this.scale = option.scale || {x: 1, y: 1};
+    this.spritesheet = option.spritesheet || null;
+    this.animSpeed = 5;
+    this.currentAnimation = 'idle';
+
     this.stats = option.stats || {};
 
     this.spells = option.spells;
@@ -18,7 +23,7 @@ export default class {
     this.updateCustom = option.update || defaultFunc;
     this.render = option.render || defaultFunc;
 
-    this.mode = 'attack';
+    this.mode = 'idle';
     this.defenseSuccess = false;
 
     this.isUltraMode = false;
@@ -27,6 +32,7 @@ export default class {
     this.target = option.target || null;
 
     this.startAt = Date.now();
+    this.lastArrowItAt = 0;
 
     this.arrowHitboxRadius = option.arrowHitboxRadius || 30;
     this.critRange = option.critRange || 3;
@@ -67,6 +73,8 @@ export default class {
       }
       this.attack(target, this.spells[0], isCrit)
       this.stats.increase('energy', 5);
+      this.currentAnimation = 'attack';
+      this.lastArrowItAt = Date.now();
       arrow.die();
     } else if (this.mode == 'ultra') {
       this.incantation.push(direction);
@@ -107,10 +115,12 @@ export default class {
 
     if (this.keyboard.isDown(this.keyboard.defenseMode)) {
       this.mode = 'defense';
+      this.currentAnimation = 'defense';
     } else if (this.keyboard.isDown(this.keyboard.ultraMode)) {
       this.defenseSuccess = false;
       this.mode = 'ultra';
       this.stats.decrease('energy', 1);
+      this.currentAnimation = 'idle';
       if (this.stats.energy <= 0) {
         this.mode = 'attack';
       }
@@ -119,6 +129,10 @@ export default class {
       this.mode = 'attack';
       this.cast(this.incantation);
       this.incantation = [];
+
+      if ((this.startAt - this.lastArrowItAt) > 150) {
+        this.currentAnimation = 'idle';
+      }
     }
 
     if (this.keyboard.isDown(this.keyboard.up)){

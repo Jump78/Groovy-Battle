@@ -10,6 +10,9 @@ import guardArrowLeft from "./assets/img/guardArrowLeft.png";
 import guardArrowUp from "./assets/img/guardArrowUp.png";
 import guardArrowRight from "./assets/img/guardArrowRight.png";
 
+import playerSpritesheetImg from "./assets/img/warrior-sprite-sheet.png";
+import playerSpritesheetJson from "./assets/img/warrior-sprite-sheet.json";
+
 import ultraModeImage from "./assets/img/ultraMode.png";
 
 import Game from './class/Game.class';
@@ -20,6 +23,7 @@ import Player from './class/Player.class';
 import Spell from './class/Spell.class';
 import Statistique from './class/Statistique.class';
 import Audio from './class/Audio.class';
+import Tileset from './class/Tileset.class';
 
 import data from './data.json';
 import song from './assets/song/UnexpectedVibes.mp3';
@@ -122,6 +126,8 @@ let player1 = new Player({
   keyboard: new Keyboard(),
   spells: data.spells.map( spell => new Spell(spell)),
   stats: new Statistique(),
+  scale: {x:-1.5, y:1.5},
+  spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({
     init(){
       let arrowDesti = arrowsBorderP1Generate.filter( arrow => arrow.direction == this.direction)[0];
@@ -158,6 +164,8 @@ let player1 = new Player({
     }
   },
   render(ctx) {
+    this.spritesheet.play(this.currentAnimation, 100, 250, this.scale, true);
+
     ctx.fillStyle = '#FF0000';
     ctx.fillRect(0, 0 , 250*(this.stats.health/this.stats.maxHealth), 10);
     ctx.fillStyle = '#0000FF';
@@ -169,8 +177,9 @@ let player1 = new Player({
       this.incantation.forEach( (direction, index) => {
         let arrow = arrowsBorderP1Generate.filter( arrow => direction == arrow.direction)[0];
         ctx.drawImage(arrow.sprite, index*50, 50);
-      })
+      });
     }
+
   }
 })
 player1.arrowManager.generate({}, 40);
