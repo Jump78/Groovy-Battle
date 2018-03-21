@@ -212,7 +212,7 @@ let player2 = new Player({
     x: GAME.canvas.parent().width() - 700,
     y: 300
   },
-  keyboard: new Keyboard({up: 104, right: 102, down: 101, left: 100, defenseMode:39, ultraMode:13}),
+  keyboard: new Keyboard({up: 73, right: 76, down: 75, left: 74, defenseMode:223, ultraMode:188}),
   spells: data.spells.map( spell => new Spell(spell)),
   stats: new Statistique(),
   scale: {x:1.5, y:1.5},
