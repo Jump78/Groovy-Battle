@@ -169,7 +169,7 @@ export default class {
 
     this.hud.healthBar.width = this.hud.healthBar.baseWidth * (this.stats.health/this.stats.maxHealth);
     this.hud.energyBar.width = this.hud.energyBar.baseWidth * (this.stats.energy/this.stats.maxEnergy);
-    this.hud.render(ctx);
+    this.hud.render(ctx, this.mode);
 
     if (this.renderCustom) {
       this.renderCustom(ctx);

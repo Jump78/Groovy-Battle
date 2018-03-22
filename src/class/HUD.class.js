@@ -25,13 +25,21 @@ export default class {
       y: 200
     }
 
+    this.arrows = option.arrows || [];
+    this.arrowsGuard = option.arrowsGuard || [];
+
     this.scale = option.scale || 1;
   }
 
-  render (ctx) {
+  render (ctx, mode) {
     ctx.fillStyle = this.healthBar.color;
     ctx.fillRect(this.healthBar.x, this.healthBar.y, this.healthBar.width * this.scale, this.healthBar.height);
     ctx.fillStyle = this.energyBar.color;
     ctx.fillRect(this.energyBar.x, this.energyBar.y, this.energyBar.width * this.scale, this.energyBar.height);
+
+    if (mode == 'defense') {
+      this.arrowsGuard.forEach( arrow => arrow.render(ctx))
+    }
+    this.arrows.forEach( arrow => arrow.render(ctx))
   }
 }

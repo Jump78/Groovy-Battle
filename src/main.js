@@ -26,6 +26,7 @@ import Statistique from './class/Statistique.class';
 import Audio from './class/Audio.class';
 import Tileset from './class/Tileset.class';
 import HUD from './class/HUD.class';
+import Sprite from './class/Sprite.class';
 
 import data from './data.json';
 import song from './assets/song/UnexpectedVibes.mp3';
@@ -52,43 +53,29 @@ const GAME = new Game({
 let message = '';
 
 let arrowsBorderP1Generate = directions.map( (direction, index) => {
-  let sprite = new Image(); // Create new image
-  sprite.src = arrowSprite[direction+'ArrowBorderImg']; // Set the image's source
-
-  let guardSprite = new Image(); // Create new image
-  guardSprite.src = guardArrowSprite['guardArrow'+direction.replace(direction[0], direction[0].toUpperCase())]; // Set the image's source
-
-  return {
-    direction: direction,
-    isDie: false,
+  let arrow = new Sprite({
     coordinates: {
       x:50*(index),
       y:200
     },
-    sprite: sprite,
-    guardSprite: guardSprite,
-    render(ctx){
-      if (player1.mode == 'defense') {
-        ctx.drawImage(this.guardSprite, this.coordinates.x,this.coordinates.y);
-      }
+    img: arrowSprite[direction+'ArrowBorderImg']
+  });
+  arrow.direction = direction;
+  return arrow;
+});
 
-      if (player1.mode != 'ultra') {
-        ctx.drawImage(this.sprite, this.coordinates.x,this.coordinates.y);
-      }
+let arrowsGuarP1Generate = directions.map( (direction, index) => {
+  let arrow = new Sprite({
+    coordinates: {
+      x:50*(index),
+      y:200
     },
+    img: guardArrowSprite['guardArrow'+direction.replace(direction[0], direction[0].toUpperCase())]
+  });
+  arrow.direction = direction;
+  return arrow;
+});
 
-    update(){
-
-    },
-
-    getCenter(){
-      return {
-        x: (this.coordinates.x + (this.coordinates.x + this.sprite.width))/2,
-        y: (this.coordinates.y + (this.coordinates.y + this.sprite.height))/2,
-      }
-    }
-  };
-})
 let arrowsBorderP2Generate = directions.map( (direction, index) => {
   let sprite = new Image(); // Create new image
   sprite.src = arrowSprite[direction+'ArrowBorderImg']; // Set the image's source
@@ -154,7 +141,9 @@ let player1 = new Player({
       height: 10,
       baseHeight: 10,
       color: '#0000FF'
-    }
+    },
+    arrows: arrowsBorderP1Generate,
+    arrowsGuard: arrowsGuarP1Generate
   }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({
@@ -309,7 +298,7 @@ GAME.scene.push({
   },
   update(){}
 });
-GAME.scene.push(...arrowsBorderP1Generate);
+// GAME.scene.push(...arrowsBorderP1Generate);
 GAME.scene.push(...arrowsBorderP2Generate);
 GAME.scene.push(player1);
 GAME.scene.push(player2);
