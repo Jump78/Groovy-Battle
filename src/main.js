@@ -129,13 +129,13 @@ let test = 0;
 let player1 = new Player({
   name: 'Player1',
   coordinates: {
-    x: 300,
-    y: 300
+    x: GAME.canvas.parent().width()/2 - 300,
+    y: 325
   },
   keyboard: new Keyboard(),
   spells: data.spells.map( spell => new Spell(spell)),
   stats: new Statistique(),
-  scale: {x:-1.5, y:1.5},
+  scale: {x:-2, y:2},
   hud: new HUD({
     healthBar:{
       x: 20,
@@ -207,15 +207,15 @@ player1.arrowManager.generate({}, 40);
 
 let player2 = new Player({
   name: 'Player2',
-  // isDie: true,
+  //isDie: true,
   coordinates: {
-    x: GAME.canvas.parent().width() - 700,
-    y: 300
+    x: GAME.canvas.parent().width()/2 - 20,
+    y: 325
   },
   keyboard: new Keyboard({up: 73, right: 76, down: 75, left: 74, defenseMode:223, ultraMode:188}),
   spells: data.spells.map( spell => new Spell(spell)),
   stats: new Statistique(),
-  scale: {x:1.5, y:1.5},
+  scale: {x:2, y:2},
   hud: new HUD({
     scale: -1,
     healthBar:{
