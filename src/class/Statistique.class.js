@@ -1,7 +1,7 @@
 export default class {
   constructor( option = {} ) {
-    this.health = option.health || option.maxHealth || 10;
-    this.maxHealth = option.maxHealth || 10;
+    this.health = option.health || option.maxHealth || 75;
+    this.maxHealth = option.maxHealth || 75;
     this.minHealth = option.minHealth || 0;
 
     this.energy = option.energy || option.maxEnergy || 100;
@@ -10,7 +10,7 @@ export default class {
 
     this.defense = option.defense || 40;
     this.damage = option.damage || 2;
-    this.criticalMultiplicator = option.criticalMultiplicator || 2.5;
+    this.criticalMultiplicator = option.criticalMultiplicator || 3;
     this.speed = 1;
   }
 
