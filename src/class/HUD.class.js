@@ -27,6 +27,10 @@ export default class {
 
     this.arrows = option.arrows || [];
     this.arrowsGuard = option.arrowsGuard || [];
+    this.arrowsSpritePull = option.arrowsSpritePull || [];
+
+    this.ultraModeBackground = option.ultraModeBackground || {};
+    this.incantation = [];
 
     this.scale = option.scale || 1;
   }
@@ -37,9 +41,19 @@ export default class {
     ctx.fillStyle = this.energyBar.color;
     ctx.fillRect(this.energyBar.x, this.energyBar.y, this.energyBar.width * this.scale, this.energyBar.height);
 
-    if (mode == 'defense') {
-      this.arrowsGuard.forEach( arrow => arrow.render(ctx))
+    if (mode == 'ultra') {
+      ctx.drawImage(this.ultraModeBackground, 0, 50);
+      this.incantation.forEach( (direction, index) => {
+        let arrow = this.arrowsSpritePull.filter( arrow => direction == arrow.direction)[0];
+        arrow.coordinates.x = index*50;
+        arrow.coordinates.y = 50;
+        arrow.render(ctx);
+      });
+    } else {
+      if (mode == 'defense') {
+        this.arrowsGuard.forEach( arrow => arrow.render(ctx));
+      }
+      this.arrows.forEach( arrow => arrow.render(ctx));
     }
-    this.arrows.forEach( arrow => arrow.render(ctx))
   }
 }

@@ -82,6 +82,7 @@ export default class {
       arrow.die();
     } else if (this.mode == 'ultra') {
       this.incantation.push(direction);
+      this.hud.incantation.push(direction);
     } else if (this.mode == 'defense' && arrow){
       this.defense();
       arrow.die();
@@ -133,6 +134,7 @@ export default class {
       this.mode = 'attack';
       this.cast(this.incantation);
       this.incantation = [];
+      this.hud.incantation = [];
 
       if ((this.startAt - this.lastArrowItAt) > 150) {
         this.currentAnimation = 'idle';

@@ -76,6 +76,25 @@ let arrowsGuarP1Generate = directions.map( (direction, index) => {
   return arrow;
 });
 
+let arrowsSpritePull = []
+
+let directionNumber = -1;
+while (arrowsSpritePull.length < 40 ) {
+  if (!(arrowsSpritePull.length % 10) ) {
+    directionNumber++;
+  }
+  let arrow = new Sprite({
+    idDie: true,
+    coordinates: {
+      x:0,
+      y:0
+    },
+    img: arrowSprite[directions[directionNumber]+'ArrowBorderImg']
+  });
+  arrow.direction = directions[directionNumber];
+
+  arrowsSpritePull.push(arrow);
+}
 let arrowsBorderP2Generate = directions.map( (direction, index) => {
   let sprite = new Image(); // Create new image
   sprite.src = arrowSprite[direction+'ArrowBorderImg']; // Set the image's source
@@ -143,7 +162,9 @@ let player1 = new Player({
       color: '#0000FF'
     },
     arrows: arrowsBorderP1Generate,
-    arrowsGuard: arrowsGuarP1Generate
+    arrowsGuard: arrowsGuarP1Generate,
+    ultraModeBackground: ultraModeSprite,
+    arrowsSpritePull: arrowsSpritePull,
   }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({
@@ -160,23 +181,13 @@ let player1 = new Player({
   }),
   update() {
     if (this.isDie) return;
-  },
-  render (ctx) {
-    if (this.mode == 'ultra') {
-      ctx.drawImage(ultraModeSprite, 0, 50);
-
-      this.incantation.forEach( (direction, index) => {
-        let arrow = arrowsBorderP1Generate.filter( arrow => direction == arrow.direction)[0];
-        ctx.drawImage(arrow.sprite, index*50, 50);
-      });
-    }
   }
 })
 player1.arrowManager.generate({}, 40);
 
 let player2 = new Player({
   name: 'Player2',
-  //isDie: true,
+  // isDie: true,
   coordinates: {
     x: GAME.canvas.parent().width()/2 - 20,
     y: 325
@@ -262,8 +273,8 @@ GAME.update = function () {
     const arrowDirection = directions[Math.floor(Math.random()*directions.length)];
     let arrows = [];
 
-    arrows.push(player1.arrowManager.getArrow(arrowDirection, 1)[0]);
-    arrows.push(player2.arrowManager.getArrow(arrowDirection, 1)[0]);
+    if (player1.mode != 'ultra') arrows.push(player1.arrowManager.getArrow(arrowDirection, 1)[0]);
+    if (player2.mode != 'ultra') arrows.push(player2.arrowManager.getArrow(arrowDirection, 1)[0]);
 
     arrows.forEach( item => {
       item.init();

@@ -2,7 +2,7 @@
 export default class {
   constructor (option = {}) {
     this.coordinates = option.coordinates || {x: 0, y:0};
-    this.isDie = option.isDie || false;
+    this.isDie = (option.isDie)? true : false;
 
     this.img = new Image(); // Create new image
     this.img.src = option.img; // Set the image's source
