@@ -42,7 +42,7 @@ export default class {
     ctx.fillRect(this.energyBar.x, this.energyBar.y, this.energyBar.width * this.scale, this.energyBar.height);
 
     if (mode == 'ultra') {
-      ctx.drawImage(this.ultraModeBackground, 0, 50);
+      this.ultraModeBackground.render(ctx);
       this.incantation.forEach( (direction, index) => {
         let arrow = this.arrowsSpritePull.filter( arrow => direction == arrow.direction)[0];
         arrow.coordinates.x = index*50;

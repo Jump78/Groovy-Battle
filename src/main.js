@@ -40,9 +40,6 @@ const arrowSprite = {upArrowBorderImg, rightArrowBorderImg, downArrowBorderImg, 
 const guardArrowSprite = {guardArrowDown, guardArrowLeft, guardArrowUp, guardArrowRight};
 const directions = ['left', 'up', 'down', 'right'];
 
-const ultraModeSprite = new Image();
-ultraModeSprite.src = ultraModeImage;
-
 const backgroundSprite = new Image();
 backgroundSprite.src = background;
 
@@ -145,6 +142,14 @@ let player1 = new Player({
       this.maxCoordinates.y = arrowDesti.getCenter().y;
       this.coordinates.x = arrowDesti.coordinates.x;
     }
+
+    const ultraModeSprite = new Sprite({
+      coordinates: {
+        x: 10,
+        y: 40
+      },
+      img: ultraModeImage
+    });
 
     this.hud.arrows = arrowHUD;
     this.hud.arrowsGuard = arrowsGuardHUD;
@@ -256,6 +261,14 @@ let player2 = new Player({
       this.coordinates.x = arrowDesti.coordinates.x;
     }
 
+    const ultraModeSprite = new Sprite({
+      coordinates: {
+        x: GAME.canvas.width() - 260,
+        y: 40
+      },
+      img: ultraModeImage
+    });
+
     this.hud.arrows = arrowHUD;
     this.hud.arrowsGuard = arrowsGuardHUD;
     this.hud.ultraModeBackground = ultraModeSprite;
@@ -268,8 +281,6 @@ let player2 = new Player({
   },
   render (ctx) {
     if (this.mode == 'ultra') {
-      ctx.drawImage(ultraModeSprite, GAME.canvas.parent().width(), 50, -ultraModeSprite.width, ultraModeSprite.height);
-
       this.incantation.forEach( (direction, index) => {
         let arrow = arrowsBorderP2Generate.filter( arrow => direction == arrow.direction)[0];
         ctx.drawImage(arrow.sprite, GAME.canvas.parent().width() - (50*(this.incantation.length-index)) , 50);
