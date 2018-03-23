@@ -160,26 +160,6 @@ let player1 = new Player({
   }),
   update() {
     if (this.isDie) return;
-    // if (test < 250) {
-    //   console.log(test);
-    // }
-    // if (audioAnalyser.playingSource.indexOf('battleSong') >= 0 && (test == 250 || test == 500 || test == 1000 || test == 2500 || test == 5000)) {
-    //   let a = audioAnalyser.getByteFrequencyData();
-    //   console.log('-------' +test+ '------');
-    //   console.log(a);
-    //   console.log(a.sort((a, b) => b.frequency - a.frequency))
-    // }
-    // test++;
-
-    let currentTime = Date.now();
-    if ( currentTime - this.startAt >= 1000 && this.mode != 'ultra') {
-      this.startAt = currentTime;
-      const direction = ['up', 'right', 'down', 'left'];
-      let arrow = this.arrowManager.getArrow(direction[Math.floor(Math.random()*direction.length)], 1)[0]
-      arrow.init();
-      arrow.velocity.y = 2;
-      GAME.scene.push(arrow);
-    }
   },
   render (ctx) {
     if (this.mode == 'ultra') {
@@ -241,16 +221,6 @@ let player2 = new Player({
   }),
   update() {
     if (this.isDie) return;
-
-    let currentTime = Date.now();
-    if ( currentTime - this.startAt >= 1000 && this.mode != 'ultra') {
-      this.startAt = currentTime;
-      const direction = ['up', 'right', 'down', 'left'];
-      let arrow = this.arrowManager.getArrow(direction[Math.floor(Math.random()*direction.length)], 1)[0]
-      arrow.init();
-      arrow.velocity.y = 2;
-      GAME.scene.push(arrow);
-    }
   },
   render (ctx) {
     if (this.mode == 'ultra') {
@@ -269,17 +239,38 @@ player2.arrowManager.generate({}, 40);
 player1.target = player2;
 player2.target = player1;
 
-GAME.update = () => {
+GAME.update = function () {
   if (player1.isDie && player2.isDie) {
     message = "Egalité";
+    return message;
   } else if (player1.isDie) {
     message = player2.name + " win";
+    return message;
   } else if (player2.isDie) {
     message = player1.name + " win";
+    return message;
   }
 
   if (audioAnalyser.bufferLoader.isAllLoaded()) {
     audioAnalyser.playSound('battleSong');
+  }
+
+  let currentTime = Date.now();
+  if ( currentTime - this.lastArrowAt >= 500 /*&& this.mode != 'ultra'*/) {
+    this.lastArrowAt = currentTime;
+    const directions = ['up', 'right', 'down', 'left'];
+    const arrowDirection = directions[Math.floor(Math.random()*directions.length)];
+    let arrows = [];
+
+    arrows.push(player1.arrowManager.getArrow(arrowDirection, 1)[0]);
+    arrows.push(player2.arrowManager.getArrow(arrowDirection, 1)[0]);
+
+    arrows.forEach( item => {
+      item.init();
+      item.velocity.y = 2;
+    });
+
+    GAME.scene.push(...arrows);
   }
 }
 

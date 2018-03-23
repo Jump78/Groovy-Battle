@@ -19,6 +19,7 @@ export default class {
     this.update = option.update || defaultFunc;
 
     this.startAt = Date.now();
+    this.lastArrowAt = Date.now();
   }
 
   init () {
