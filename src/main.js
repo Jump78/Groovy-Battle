@@ -52,85 +52,6 @@ const GAME = new Game({
 
 let message = '';
 
-let arrowsBorderP1Generate = directions.map( (direction, index) => {
-  let arrow = new Sprite({
-    coordinates: {
-      x:50*(index),
-      y:200
-    },
-    img: arrowSprite[direction+'ArrowBorderImg']
-  });
-  arrow.direction = direction;
-  return arrow;
-});
-
-let arrowsGuarP1Generate = directions.map( (direction, index) => {
-  let arrow = new Sprite({
-    coordinates: {
-      x:50*(index),
-      y:200
-    },
-    img: guardArrowSprite['guardArrow'+direction.replace(direction[0], direction[0].toUpperCase())]
-  });
-  arrow.direction = direction;
-  return arrow;
-});
-
-let arrowsSpritePull = []
-
-let directionNumber = -1;
-while (arrowsSpritePull.length < 40 ) {
-  if (!(arrowsSpritePull.length % 10) ) {
-    directionNumber++;
-  }
-  let arrow = new Sprite({
-    idDie: true,
-    coordinates: {
-      x:0,
-      y:0
-    },
-    img: arrowSprite[directions[directionNumber]+'ArrowBorderImg']
-  });
-  arrow.direction = directions[directionNumber];
-
-  arrowsSpritePull.push(arrow);
-}
-let arrowsBorderP2Generate = directions.map( (direction, index) => {
-  let sprite = new Image(); // Create new image
-  sprite.src = arrowSprite[direction+'ArrowBorderImg']; // Set the image's source
-
-  let guardSprite = new Image(); // Create new image
-  guardSprite.src = guardArrowSprite['guardArrow'+direction.replace(direction[0], direction[0].toUpperCase())]; // Set the image's source
-
-  return {
-    direction: direction,
-    isDie: false,
-    coordinates: {
-      x: GAME.canvas.parent().width() - (50*(directions.length-index)),
-      y:200
-    },
-    sprite: sprite,
-    guardSprite: guardSprite,
-    render(ctx){
-      if (player2.mode == 'defense') {
-        ctx.drawImage(this.guardSprite, this.coordinates.x,this.coordinates.y);
-      }
-      ctx.drawImage(this.sprite, this.coordinates.x,this.coordinates.y);
-    },
-
-    update(){
-
-    },
-
-    getCenter(){
-      return {
-        x: (this.coordinates.x + (this.coordinates.x + this.sprite.width))/2,
-        y: (this.coordinates.y + (this.coordinates.y + this.sprite.height))/2,
-      }
-    }
-  };
-})
-
 let test = 0;
 let player1 = new Player({
   name: 'Player1',
@@ -161,29 +82,83 @@ let player1 = new Player({
       baseHeight: 10,
       color: '#0000FF'
     },
-    arrows: arrowsBorderP1Generate,
-    arrowsGuard: arrowsGuarP1Generate,
-    ultraModeBackground: ultraModeSprite,
-    arrowsSpritePull: arrowsSpritePull,
+    // arrows: arrowsBorderP1Generate,
+    // arrowsGuard: arrowsGuarP1Generate,
+    // ultraModeBackground: ultraModeSprite,
+    // arrowsSpritePull: arrowsSpritePull,
   }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({
-    init(){
-      let arrowDesti = arrowsBorderP1Generate.filter( arrow => arrow.direction == this.direction)[0];
-      this.maxCoordinates.y = arrowDesti.getCenter().y;
-      this.coordinates.x = arrowDesti.coordinates.x;
-    },
     update(){
       if (this.coordinates.y > GAME.canvas.height()) {
         this.die();
       }
     }
   }),
+  init() {
+    let arrowHUD = directions.map( (direction, index) => {
+      let arrow = new Sprite({
+        coordinates: {
+          x:50*(index),
+          y:200
+        },
+        img: arrowSprite[direction+'ArrowBorderImg']
+      });
+      arrow.direction = direction;
+      return arrow;
+    });
+
+    let arrowsGuardHUD = directions.map( (direction, index) => {
+      let arrow = new Sprite({
+        coordinates: {
+          x:50*(index),
+          y:200
+        },
+        img: guardArrowSprite['guardArrow'+direction.replace(direction[0], direction[0].toUpperCase())]
+      });
+      arrow.direction = direction;
+      return arrow;
+    });
+
+    let arrowsSpriteHUDPull = []
+
+    let directionNumber = -1;
+    while (arrowsSpriteHUDPull.length < 40 ) {
+      if (!(arrowsSpriteHUDPull.length % 10) ) {
+        directionNumber++;
+      }
+      let arrow = new Sprite({
+        idDie: true,
+        coordinates: {
+          x:0,
+          y:0
+        },
+        img: arrowSprite[directions[directionNumber]+'ArrowBorderImg']
+      });
+      arrow.direction = directions[directionNumber];
+
+      arrowsSpriteHUDPull.push(arrow);
+    }
+
+    this.arrowManager.option.init = function(){
+      let arrowDesti = arrowHUD.filter( arrow => arrow.direction == this.direction)[0];
+      this.maxCoordinates.y = arrowDesti.getCenter().y;
+      this.coordinates.x = arrowDesti.coordinates.x;
+    }
+
+    this.hud.arrows = arrowHUD;
+    this.hud.arrowsGuard = arrowsGuardHUD;
+    this.hud.ultraModeBackground = ultraModeSprite;
+    this.hud.arrowsSpritePull = arrowsSpriteHUDPull;
+
+    this.arrowManager.generate({}, 40);
+  },
   update() {
     if (this.isDie) return;
   }
 })
-player1.arrowManager.generate({}, 40);
+player1.init();
+
 
 let player2 = new Player({
   name: 'Player2',
@@ -219,17 +194,75 @@ let player2 = new Player({
   }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({
-    init(){
-      let arrowDesti = arrowsBorderP2Generate.filter( arrow => arrow.direction == this.direction)[0];
-      this.maxCoordinates.y = arrowDesti.getCenter().y;
-      this.coordinates.x = arrowDesti.coordinates.x;
-    },
+    // init(){
+    //   let arrowDesti = arrowsBorderP2Generate.filter( arrow => arrow.direction == this.direction)[0];
+    //   this.maxCoordinates.y = arrowDesti.getCenter().y;
+    //   this.coordinates.x = arrowDesti.coordinates.x;
+    // },
     update(){
       if (this.coordinates.y > GAME.canvas.height()) {
         this.die();
       }
     }
   }),
+  init() {
+    let arrowHUD = directions.map( (direction, index) => {
+      let arrow = new Sprite({
+        coordinates: {
+          x:GAME.canvas.parent().width() - (50*(directions.length-index)),
+          y:200
+        },
+        img: arrowSprite[direction+'ArrowBorderImg']
+      });
+      arrow.direction = direction;
+      return arrow;
+    });
+
+    let arrowsGuardHUD = directions.map( (direction, index) => {
+      let arrow = new Sprite({
+        coordinates: {
+          x:GAME.canvas.parent().width() - (50*(directions.length-index)),
+          y:200
+        },
+        img: guardArrowSprite['guardArrow'+direction.replace(direction[0], direction[0].toUpperCase())]
+      });
+      arrow.direction = direction;
+      return arrow;
+    });
+
+    let arrowsSpriteHUDPull = []
+
+    let directionNumber = -1;
+    while (arrowsSpriteHUDPull.length < 40 ) {
+      if (!(arrowsSpriteHUDPull.length % 10) ) {
+        directionNumber++;
+      }
+      let arrow = new Sprite({
+        idDie: true,
+        coordinates: {
+          x:0,
+          y:0
+        },
+        img: arrowSprite[directions[directionNumber]+'ArrowBorderImg']
+      });
+      arrow.direction = directions[directionNumber];
+
+      arrowsSpriteHUDPull.push(arrow);
+    }
+
+    this.arrowManager.option.init = function(){
+      let arrowDesti = arrowHUD.filter( arrow => arrow.direction == this.direction)[0];
+      this.maxCoordinates.y = arrowDesti.getCenter().y;
+      this.coordinates.x = arrowDesti.coordinates.x;
+    }
+
+    this.hud.arrows = arrowHUD;
+    this.hud.arrowsGuard = arrowsGuardHUD;
+    this.hud.ultraModeBackground = ultraModeSprite;
+    this.hud.arrowsSpritePull = arrowsSpriteHUDPull;
+
+    this.arrowManager.generate({}, 40);
+  },
   update() {
     if (this.isDie) return;
   },
@@ -245,7 +278,7 @@ let player2 = new Player({
   }
 
 })
-player2.arrowManager.generate({}, 40);
+player2.init();
 
 player1.target = player2;
 player2.target = player1;
@@ -300,8 +333,6 @@ GAME.scene.push({
   },
   update(){}
 });
-// GAME.scene.push(...arrowsBorderP1Generate);
-GAME.scene.push(...arrowsBorderP2Generate);
 GAME.scene.push(player1);
 GAME.scene.push(player2);
 GAME.gameloop();

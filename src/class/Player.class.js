@@ -26,6 +26,7 @@ export default class {
 
     this.updateCustom = option.update || defaultFunc;
     this.renderCustom = option.render || defaultFunc;
+    this.initCustom = option.init || defaultFunc;
 
     this.mode = 'idle';
     this.defenseSuccess = false;
@@ -100,6 +101,12 @@ export default class {
       }
     }
     return false
+  }
+
+  init() {
+    if (this.initCustom) {
+      this.initCustom();
+    }
   }
 
   update() {
