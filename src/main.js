@@ -61,8 +61,12 @@ let player1 = new Player({
   stats: new Statistique(),
   scale: {x:-2, y:2},
   hud: new HUD({
+    coordinates: {
+      x: 10,
+      y: 10
+    },
     healthBar:{
-      x: 20,
+      x: 0,
       y: 10,
       width: 250,
       baseWidth: 250,
@@ -71,7 +75,7 @@ let player1 = new Player({
       color: '#FF0000'
     },
     energyBar:{
-      x: 20,
+      x: 0,
       y: 20,
       width: 150,
       baseWidth: 150,
@@ -145,7 +149,7 @@ let player1 = new Player({
 
     const ultraModeSprite = new Sprite({
       coordinates: {
-        x: 10,
+        x: 0,
         y: 40
       },
       img: ultraModeImage
@@ -177,9 +181,13 @@ let player2 = new Player({
   stats: new Statistique(),
   scale: {x:2, y:2},
   hud: new HUD({
-    scale: -1,
+    coordinates: {
+      x: GAME.canvas.width() - 10,
+      y: 10
+    },
+    scale: {x:-1, y:1},
     healthBar:{
-      x: GAME.canvas.parent().width() - 20,
+      x: 0,
       y: 10,
       width: 250,
       baseWidth: 250,
@@ -188,7 +196,7 @@ let player2 = new Player({
       color: '#FF0000'
     },
     energyBar:{
-      x: GAME.canvas.parent().width()-20,
+      x: 0,
       y: 20,
       width: 150,
       baseWidth: 150,
@@ -214,8 +222,8 @@ let player2 = new Player({
     let arrowHUD = directions.map( (direction, index) => {
       let arrow = new Sprite({
         coordinates: {
-          x:GAME.canvas.parent().width() - (50*(directions.length-index)),
-          y:200
+          x: 50*index,
+          y: 200
         },
         img: arrowSprite[direction+'ArrowBorderImg']
       });
@@ -226,8 +234,8 @@ let player2 = new Player({
     let arrowsGuardHUD = directions.map( (direction, index) => {
       let arrow = new Sprite({
         coordinates: {
-          x:GAME.canvas.parent().width() - (50*(directions.length-index)),
-          y:200
+          x: 50*index,
+          y: 200
         },
         img: guardArrowSprite['guardArrow'+direction.replace(direction[0], direction[0].toUpperCase())]
       });
@@ -263,7 +271,7 @@ let player2 = new Player({
 
     const ultraModeSprite = new Sprite({
       coordinates: {
-        x: GAME.canvas.width() - 260,
+        x: 0,
         y: 40
       },
       img: ultraModeImage
@@ -311,21 +319,14 @@ GAME.update = function () {
   }
 
   let currentTime = Date.now();
-  if ( currentTime - this.lastArrowAt >= 500 /*&& this.mode != 'ultra'*/) {
+  if ( currentTime - this.lastArrowAt >= 500) {
     this.lastArrowAt = currentTime;
     const directions = ['up', 'right', 'down', 'left'];
     const arrowDirection = directions[Math.floor(Math.random()*directions.length)];
     let arrows = [];
 
-    if (player1.mode != 'ultra') arrows.push(player1.arrowManager.getArrow(arrowDirection, 1)[0]);
-    if (player2.mode != 'ultra') arrows.push(player2.arrowManager.getArrow(arrowDirection, 1)[0]);
-
-    arrows.forEach( item => {
-      item.init();
-      item.velocity.y = 2;
-    });
-
-    GAME.scene.push(...arrows);
+    if (player1.mode != 'ultra') player1.addArrow(arrowDirection);
+    if (player2.mode != 'ultra') player2.addArrow(arrowDirection);
   }
 }
 

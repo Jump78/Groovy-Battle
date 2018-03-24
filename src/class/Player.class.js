@@ -39,6 +39,8 @@ export default class {
     this.startAt = Date.now();
     this.lastArrowItAt = 0;
 
+    this.currentArrows = [];
+
     this.arrowHitboxRadius = option.arrowHitboxRadius || 30;
     this.critRange = option.critRange || 3;
   }
@@ -101,6 +103,14 @@ export default class {
       }
     }
     return false
+  }
+
+  addArrow(direction) {
+    let arrow = this.arrowManager.getArrow(direction, 1)[0];
+    arrow.init();
+    arrow.velocity.y = 2;
+    this.currentArrows.push(arrow);
+    return this.currentArrows;
   }
 
   init() {
@@ -168,6 +178,13 @@ export default class {
       this.keyboard.remove(this.keyboard.left)
     }
 
+    const self = this;
+    this.currentArrows.forEach( item => {
+      item.update();
+      if (item.isDie) self.currentArrows.splice(self.currentArrows.indexOf(item), 1);
+
+    });
+
     if (this.updateCustom) {
       this.updateCustom();
     }
@@ -179,6 +196,10 @@ export default class {
     this.hud.healthBar.width = this.hud.healthBar.baseWidth * (this.stats.health/this.stats.maxHealth);
     this.hud.energyBar.width = this.hud.energyBar.baseWidth * (this.stats.energy/this.stats.maxEnergy);
     this.hud.render(ctx, this.mode);
+
+    this.currentArrows.forEach( item => {
+      item.render(ctx);
+    });
 
     if (this.renderCustom) {
       this.renderCustom(ctx);

@@ -1,5 +1,7 @@
 export default class {
   constructor (option = {}) {
+    this.coordinates = option.coordinates || {x: 0, y:0};
+
     this.healthBar = option.healthBar || {
       x: 0,
       y: 0,
@@ -32,17 +34,23 @@ export default class {
     this.ultraModeBackground = option.ultraModeBackground || {};
     this.incantation = [];
 
-    this.scale = option.scale || 1;
+    this.scale = option.scale || {x: 1, y: 1};
   }
 
   render (ctx, mode) {
+    ctx.save();
+    ctx.translate(this.coordinates.x, this.coordinates.y);
+    ctx.scale(this.scale.x, this.scale.y);
+
     ctx.fillStyle = this.healthBar.color;
-    ctx.fillRect(this.healthBar.x, this.healthBar.y, this.healthBar.width * this.scale, this.healthBar.height);
+    ctx.fillRect(this.healthBar.x, this.healthBar.y, this.healthBar.width, this.healthBar.height);
+
     ctx.fillStyle = this.energyBar.color;
-    ctx.fillRect(this.energyBar.x, this.energyBar.y, this.energyBar.width * this.scale, this.energyBar.height);
+    ctx.fillRect(this.energyBar.x, this.energyBar.y, this.energyBar.width, this.energyBar.height);
 
     if (mode == 'ultra') {
       this.ultraModeBackground.render(ctx);
+
       this.incantation.forEach( (direction, index) => {
         let arrow = this.arrowsSpritePull.filter( arrow => direction == arrow.direction)[0];
         arrow.coordinates.x = index*50;
@@ -55,5 +63,7 @@ export default class {
       }
       this.arrows.forEach( arrow => arrow.render(ctx));
     }
+
+    ctx.restore();
   }
 }
