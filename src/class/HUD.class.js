@@ -30,6 +30,7 @@ export default class {
     this.arrows = option.arrows || [];
     this.arrowsGuard = option.arrowsGuard || [];
     this.arrowsSpritePull = option.arrowsSpritePull || [];
+    this.dynamicArrows = [];
 
     this.ultraModeBackground = option.ultraModeBackground || {};
     this.incantation = [];
@@ -58,11 +59,18 @@ export default class {
         arrow.render(ctx);
       });
     } else {
+      ctx.scale(this.scale.x, this.scale.y);
       if (mode == 'defense') {
         this.arrowsGuard.forEach( arrow => arrow.render(ctx));
       }
-      this.arrows.forEach( arrow => arrow.render(ctx));
+      this.arrows.forEach( arrow => {
+        arrow.render(ctx)
+      });
     }
+
+    this.dynamicArrows.forEach( item => {
+      item.render(ctx);
+    });
 
     ctx.restore();
   }

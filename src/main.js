@@ -219,10 +219,10 @@ let player2 = new Player({
     }
   }),
   init() {
-    let arrowHUD = directions.map( (direction, index) => {
+    let arrowHUD = directions.reverse().map( (direction, index) => {
       let arrow = new Sprite({
         coordinates: {
-          x: 50*index,
+          x: -50*index - 50,
           y: 200
         },
         img: arrowSprite[direction+'ArrowBorderImg']

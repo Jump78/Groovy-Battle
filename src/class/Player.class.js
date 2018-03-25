@@ -110,6 +110,7 @@ export default class {
     arrow.init();
     arrow.velocity.y = 2;
     this.currentArrows.push(arrow);
+    this.hud.dynamicArrows.push(arrow);
     return this.currentArrows;
   }
 
@@ -181,8 +182,10 @@ export default class {
     const self = this;
     this.currentArrows.forEach( item => {
       item.update();
-      if (item.isDie) self.currentArrows.splice(self.currentArrows.indexOf(item), 1);
-
+      if (item.isDie) {
+        self.currentArrows.splice(self.currentArrows.indexOf(item), 1)
+        self.hud.dynamicArrows.splice(self.hud.dynamicArrows.indexOf(item), 1)
+      };
     });
 
     if (this.updateCustom) {
@@ -196,10 +199,6 @@ export default class {
     this.hud.healthBar.width = this.hud.healthBar.baseWidth * (this.stats.health/this.stats.maxHealth);
     this.hud.energyBar.width = this.hud.energyBar.baseWidth * (this.stats.energy/this.stats.maxEnergy);
     this.hud.render(ctx, this.mode);
-
-    this.currentArrows.forEach( item => {
-      item.render(ctx);
-    });
 
     if (this.renderCustom) {
       this.renderCustom(ctx);
