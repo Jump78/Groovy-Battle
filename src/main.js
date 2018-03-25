@@ -286,16 +286,7 @@ let player2 = new Player({
   },
   update() {
     if (this.isDie) return;
-  },
-  render (ctx) {
-    if (this.mode == 'ultra') {
-      this.incantation.forEach( (direction, index) => {
-        let arrow = arrowsBorderP2Generate.filter( arrow => direction == arrow.direction)[0];
-        ctx.drawImage(arrow.sprite, GAME.canvas.parent().width() - (50*(this.incantation.length-index)) , 50);
-      });
-    }
   }
-
 })
 player2.init();
 
