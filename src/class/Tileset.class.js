@@ -30,21 +30,22 @@ export default class{
 	 * @param  {int} [offset=0] 	 Offset of the Y axis
 	 * @return {undefined}         Nothing
 	 */
-	drawTile(tile, x, y, scale = {}, offset = 0){
+	drawTile(tile, x, y, scale = {}, offset = {x:0, y:0}){
 		if (!scale.x) scale.x = 1;
-    if (!scale.y) scale.y = 1;
+		if (!scale.y) scale.y = 1;
 
 		let widthFactor = (scale.x > 0)? 1 : -1;
 		let heightFactor = (scale.y > 0)? 1 : -1;
 
-		y += offset * scale.y;
+		y += offset.y * scale.y;
+		x += offset.x * scale.x;
 
-		 this.ctx.save();
-		 this.ctx.translate(x, y);
-		 this.ctx.scale(scale.x, scale.y);
-		 this.ctx.drawImage(this.image, tile.x, tile.y, tile.width, tile.height, 0,  0,
-					 tile.width * widthFactor, tile.height * heightFactor);
-	 	 this.ctx.restore();
+		this.ctx.save();
+		this.ctx.translate(x, y);
+		this.ctx.scale(scale.x, scale.y);
+		this.ctx.drawImage(this.image, tile.x, tile.y, tile.width, tile.height,
+		 									0, 0,tile.width * widthFactor, tile.height * heightFactor);
+		 this.ctx.restore();
 	}
 
 	/**
@@ -71,6 +72,14 @@ export default class{
 	 */
 	getMaxTile () {
 		return this.data.sort((a, b) => b.height - a.height)[0];
+	}
+
+	/**
+	 * Return the highest tile
+	 * @return {tile}    The highest tile
+	 */
+	getMaxTileW () {
+		return this.data.sort((a, b) => b.width - a.width)[0];
 	}
 
 	/**
@@ -142,8 +151,13 @@ export default class{
 			}
 		}
 
+		let offset = {
+			x: (scale.x > 0)? this.getMaxTileW(name).width - tile.width : 0,
+			y: (this.getMaxTile(name).height - tile.height)
+		}
+
 		// (this.getMaxTile(name).height - tile.height) is the tile's offset
-		this.drawTile(tile, x, y, scale, (this.getMaxTile(name).height - tile.height));
+		this.drawTile(tile, x, y, scale, offset);
 		totalFramePlayed++;
 	}
 }
