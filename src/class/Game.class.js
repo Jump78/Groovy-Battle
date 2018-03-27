@@ -20,6 +20,22 @@ export default class {
 
     this.startAt = Date.now();
     this.lastArrowAt = Date.now();
+
+    this.isRoundFinished = false;
+  }
+
+  /**
+   * Reset players after 5 sec
+   * @param {player} player1  A player
+   * @param {player} player2  Second player
+   */
+  resetRound (player1, player2) {
+    const self = this;
+    setTimeout(function(){
+      self.isRoundFinished = false; // Allow the game to run another round
+      player1.revive(); // Reset the player
+      player2.revive();
+    }, 5000)
   }
 
   init () {
@@ -35,7 +51,7 @@ export default class {
       item.render(this.context);
       this.context.restore();
       item.update();
-      if (item.isDie) self.scene.splice(self.scene.indexOf(item), 1)
+      //if (item.isDie) self.scene.splice(self.scene.indexOf(item), 1)
     })
 
     this.update();

@@ -1,3 +1,4 @@
+///TODO function init Value
 export default class {
   constructor( option = {} ) {
     this.health = option.health || option.maxHealth || 75;
@@ -13,7 +14,9 @@ export default class {
     this.criticalMultiplicator = option.criticalMultiplicator || 3;
     this.speed = 1;
     this.comboMultiplier = option.comboMultiplier || 1;
-    
+    this.defaultValue = {};
+
+    Object.assign(this.defaultValue, this);
   }
 
   increase(name, number){
@@ -36,5 +39,15 @@ export default class {
     }
 
     return this[name];
+  }
+
+  /**
+   * Reset each stat has the initial value
+   */
+  reset(){
+    for (let prop in this) {
+      if (prop == 'option') continue;
+      this[prop] = this.defaultValue[prop];
+    }
   }
 }

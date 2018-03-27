@@ -44,6 +44,7 @@ export default class {
 
     this.arrowHitboxRadius = option.arrowHitboxRadius || 30;
     this.critRange = option.critRange || 3;
+    this.roundWon = 0;
   }
 
   takeDamage( damage ){
@@ -121,6 +122,12 @@ export default class {
     this.currentArrows.push(arrow);
     this.hud.dynamicArrows.push(arrow);
     return this.currentArrows;
+  }
+
+  revive () {
+    this.stats.reset();
+    this.isDie = false;
+    this.combo = 0;
   }
 
   init() {

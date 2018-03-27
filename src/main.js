@@ -308,16 +308,23 @@ player1.target = player2;
 player2.target = player1;
 
 GAME.update = function () {
-  if (player1.isDie && player2.isDie) {
-    message = "Egalité";
-    return message;
-  } else if (player1.isDie) {
-    message = player2.name + " win";
-    return message;
-  } else if (player2.isDie) {
-    message = player1.name + " win";
-    return message;
-  }
+    // Check if both player are dead
+    if (player1.isDie && player2.isDie) {
+      message = "Egalité";
+      this.isRoundFinished = true;
+      this.resetRound(player1, player2);
+
+    } else if (player1.isDie || player2.isDie){ // Check if one player is dead
+      const winner = (player1.isDie)? player2 : player1; // Find the player who's dead
+      winner.roundWon++;
+      this.isRoundFinished = true;
+      if (winner.roundWon >= 2) { // If the winner have win 2 round or more
+        return message = winner.name + " win the figth"; // the player has win the fight
+      }
+
+      message = winner.name + " win the round";
+      this.resetRound(player1, player2); //Launch au new round
+    }
 
   if (audioAnalyser.bufferLoader.isAllLoaded()) {
     audioAnalyser.playSound('battleSong');
@@ -330,8 +337,8 @@ GAME.update = function () {
     const arrowDirection = directions[Math.floor(Math.random()*directions.length)];
     let arrows = [];
 
-    if (player1.mode != 'ultra') player1.addArrow(arrowDirection);
-    if (player2.mode != 'ultra') player2.addArrow(arrowDirection);
+    if ((!player1.isDie && !player2.isDie) && player1.mode != 'ultra') player1.addArrow(arrowDirection);
+    if ((!player1.isDie && !player2.isDie) && player2.mode != 'ultra') player2.addArrow(arrowDirection);
   }
 }
 
@@ -341,15 +348,16 @@ GAME.scene.push({
   },
   update(){}
 });
+GAME.scene.push(player1);
+GAME.scene.push(player2);
 GAME.scene.push({
   render(ctx) {
+    if (!GAME.isRoundFinished) return;
     ctx.fillStyle = '#FF0000';
     ctx.font = "60px Impact";
     ctx.textAlign = "center";
-    ctx.fillText(message,GAME.canvas.width()/2,GAME.canvas.height()/2);
+    ctx.fillText(message, GAME.canvas.width()/2, GAME.canvas.height()/2);
   },
   update(){}
 });
-GAME.scene.push(player1);
-GAME.scene.push(player2);
 GAME.gameloop();
