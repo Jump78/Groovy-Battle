@@ -19,6 +19,7 @@ export default class {
     this.spells = option.spells;
 
     this.score = option.score || 0;
+    this.combo = option.combo || 0;
 
     this.keyboard = option.keyboard || {};
 
@@ -63,7 +64,7 @@ export default class {
   }
 
   attack (target, spell, isCrit){
-    spell.use(target, this.stats, isCrit);
+    spell.use(target, this.stats, isCrit, this.stats.comboMultiplier);
   }
 
   defense () {
@@ -82,12 +83,20 @@ export default class {
       this.stats.increase('energy', 5);
       this.currentAnimation = 'attack';
       this.lastArrowItAt = Date.now();
+      this.combo++;
+      if (!(this.combo%15)) {
+        this.stats.increase('comboMultiplier', 0.5)
+      }
       arrow.die();
     } else if (this.mode == 'ultra') {
       this.incantation.push(direction);
       this.hud.incantation.push(direction);
     } else if (this.mode == 'defense' && arrow){
       this.defense();
+      this.combo++;
+      if (!(this.combo%15)) {
+        this.stats.increase('comboMultiplier', 0.5)
+      }
       arrow.die();
     }
   }
@@ -198,6 +207,7 @@ export default class {
 
     this.hud.healthBar.width = this.hud.healthBar.baseWidth * (this.stats.health/this.stats.maxHealth);
     this.hud.energyBar.width = this.hud.energyBar.baseWidth * (this.stats.energy/this.stats.maxEnergy);
+    this.hud.combo.value = this.combo;
     this.hud.render(ctx, this.mode);
 
     if (this.renderCustom) {

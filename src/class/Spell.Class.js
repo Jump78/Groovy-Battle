@@ -8,11 +8,11 @@ export default class {
     this.currentRepeat = 0;
   }
 
-  use (target, statBonus, isCrit){
+  use (target, statBonus, isCrit, comboMultiplier = 1){
     if (this.effect.damage > 0) {
       let multiplicator = isCrit? statBonus.criticalMultiplicator : 1;
       let damage = this.effect.damage + (this.effect.damage * (statBonus.damage * 0.05));
-      target.takeDamage(damage * multiplicator );
+      target.takeDamage(damage * comboMultiplier * multiplicator );
     }
 
     if (this.effect.energyRestore > 0) {

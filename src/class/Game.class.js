@@ -31,7 +31,9 @@ export default class {
 
     let self = this;
     this.scene.forEach( item => {
+      this.context.save();
       item.render(this.context);
+      this.context.restore();
       item.update();
       if (item.isDie) self.scene.splice(self.scene.indexOf(item), 1)
     })

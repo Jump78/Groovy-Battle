@@ -12,6 +12,8 @@ export default class {
     this.damage = option.damage || 2;
     this.criticalMultiplicator = option.criticalMultiplicator || 3;
     this.speed = 1;
+    this.comboMultiplier = option.comboMultiplier || 1;
+    
   }
 
   increase(name, number){

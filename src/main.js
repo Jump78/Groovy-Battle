@@ -83,6 +83,13 @@ let player1 = new Player({
       baseHeight: 10,
       color: '#0000FF'
     },
+    combo: {
+      x: 220,
+      y: 50,
+      color: '#BADA55',
+      font: "30px Impact",
+      value: 0
+    }
     // arrows: arrowsBorderP1Generate,
     // arrowsGuard: arrowsGuarP1Generate,
     // ultraModeBackground: ultraModeSprite,
@@ -203,6 +210,13 @@ let player2 = new Player({
       height: 10,
       baseHeight: 10,
       color: '#0000FF'
+    },
+    combo: {
+      x: 225,
+      y: 70,
+      color: '#BADA55',
+      font: "30px Impact",
+      value: 0
     }
   }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
