@@ -162,8 +162,7 @@ export default class {
       this.cast(this.incantation);
       this.incantation = [];
       this.hud.incantation = [];
-
-      if ((this.startAt - this.lastArrowItAt) > 150) {
+      if (Date.now() - this.lastArrowItAt > 700) {
         this.currentAnimation = 'idle';
       }
     }
