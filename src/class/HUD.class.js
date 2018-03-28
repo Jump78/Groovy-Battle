@@ -59,10 +59,6 @@ export default class {
     ctx.fillStyle = this.energyBar.color;
     ctx.fillRect(this.energyBar.x, this.energyBar.y, this.energyBar.width, this.energyBar.height);
 
-    ctx.fillStyle = this.combo.color;
-    ctx.font = this.combo.font;
-    ctx.fillText(this.combo.value, this.combo.x, this.combo.y);
-
     if (mode == 'ultra') {
       this.ultraModeBackground.render(ctx);
 
@@ -85,6 +81,11 @@ export default class {
     this.dynamicArrows.forEach( item => {
       item.render(ctx);
     });
+
+    ctx.fillStyle = this.combo.color;
+    ctx.font = this.combo.font;
+    ctx.textAlign = this.combo.textAlign;
+    ctx.fillText(this.combo.value, (this.scale.x>0)? this.combo.x : -this.combo.x, (this.scale.y>0)? this.combo.y : -this.combo.y);
 
     ctx.restore();
   }

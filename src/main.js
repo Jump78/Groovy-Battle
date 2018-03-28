@@ -213,9 +213,10 @@ let player2 = new Player({
     },
     combo: {
       x: 225,
-      y: 70,
+      y: 50,
       color: '#BADA55',
       font: "30px Impact",
+      textAlign: "right",
       value: 0
     }
   }),
