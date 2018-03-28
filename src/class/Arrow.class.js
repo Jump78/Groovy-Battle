@@ -11,6 +11,8 @@ export default class {
     this.isDie = (option.isDie)? true :false;
     this.direction = option.direction || 'up'; // Arrow direction
     this.lifetime = option.lifetime || 0;
+    this.alpha = 1;
+    this.fade = false;
     this.coordinates = {
         x: option.coordinates.x || 0, // X coordinate
         y: option.coordinates.y || 0  // Y coordinate
@@ -56,11 +58,14 @@ export default class {
     if (this.renderOption) {
       this.renderOption(ctx);
     }
+    ctx.globalAlpha = this.alpha;
     ctx.drawImage(this.sprite, this.coordinates.x,this.coordinates.y);
   }
 
   init() {
     this.isDie = false;
+    this.alpha = 1;
+    this.fade = false;
     this.coordinates.y = this.option.coordinates.y || 0;
     if (this.option.velocity) {
       this.velocity = {
@@ -79,7 +84,12 @@ export default class {
   }
 
   update() {
+    if (this.isDie) return;
+
     this.coordinates.y += this.velocity.y;
+    if (this.fade) this.alpha-= 0.1;
+
+    if (this.alpha <= 0) this.isDie = true;
     if (this.updateOption) {
       this.updateOption();
     }

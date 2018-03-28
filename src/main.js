@@ -96,13 +96,7 @@ let player1 = new Player({
     // arrowsSpritePull: arrowsSpritePull,
   }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
-  arrowManager: new ArrowManager({
-    update(){
-      if (this.coordinates.y > GAME.canvas.height()) {
-        this.die();
-      }
-    }
-  }),
+  arrowManager: new ArrowManager({}),
   init() {
     let arrowHUD = directions.map( (direction, index) => {
       let arrow = new Sprite({
@@ -154,6 +148,11 @@ let player1 = new Player({
       this.coordinates.x = arrowDesti.coordinates.x;
     }
 
+    this.arrowManager.option.update = function(){
+      if (this.coordinates.y > this.maxCoordinates.y) {
+        this.fade = true;
+      }
+    }
     const ultraModeSprite = new Sprite({
       coordinates: {
         x: 0,
@@ -221,18 +220,7 @@ let player2 = new Player({
     }
   }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
-  arrowManager: new ArrowManager({
-    // init(){
-    //   let arrowDesti = arrowsBorderP2Generate.filter( arrow => arrow.direction == this.direction)[0];
-    //   this.maxCoordinates.y = arrowDesti.getCenter().y;
-    //   this.coordinates.x = arrowDesti.coordinates.x;
-    // },
-    update(){
-      if (this.coordinates.y > GAME.canvas.height()) {
-        this.die();
-      }
-    }
-  }),
+  arrowManager: new ArrowManager({}),
   init() {
     let arrowHUD = directions.reverse().map( (direction, index) => {
       let arrow = new Sprite({
@@ -282,6 +270,12 @@ let player2 = new Player({
       let arrowDesti = arrowHUD.filter( arrow => arrow.direction == this.direction)[0];
       this.maxCoordinates.y = arrowDesti.getCenter().y;
       this.coordinates.x = arrowDesti.coordinates.x;
+    }
+
+    this.arrowManager.option.update = function(){
+      if (this.coordinates.y > this.maxCoordinates.y) {
+        this.fade = true;
+      }
     }
 
     const ultraModeSprite = new Sprite({
