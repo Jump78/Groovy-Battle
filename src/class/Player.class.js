@@ -48,7 +48,9 @@ export default class {
 
     this.isStun = false;
     this.StunAt = 0;
-  }
+
+    this.queue = option.queue || {};
+   }
 
   takeDamage( damage ){
     let realDamage = damage;
@@ -171,21 +173,61 @@ export default class {
 
     if (this.isStun) return;
 
-    const filterFunc = (arrow) => {
-      return !arrow.isDie
-             && (arrow.maxCoordinates.y - (arrow.coordinates.y + arrow.sprite.height)) < this.arrowHitboxRadius
-             && (arrow.maxCoordinates.y - arrow.coordinates.y) >= -this.arrowHitboxRadius
-    }
-
-    let upArrow = this.arrowManager.getArrowIf('up', 1, filterFunc)[0];
-    let rightArrow = this.arrowManager.getArrowIf('right', 1, filterFunc)[0];
-    let downArrow = this.arrowManager.getArrowIf('down', 1, filterFunc)[0];
-    let leftArrow = this.arrowManager.getArrowIf('left', 1, filterFunc)[0];
+    let message = this.name;
 
     if (this.keyboard.isDown(this.keyboard.defenseMode)) {
+      message += '-defense';
+    } else if (this.keyboard.isDown(this.keyboard.ultraMode)) {
+      message += '-ultra';
+    } else {
+      message += '-attack';
+    }
+
+    if (this.keyboard.isDown(this.keyboard.up)){
+      message += '-upArrow';
+      this.keyboard.remove(this.keyboard.up)
+    }
+
+    if (this.keyboard.isDown(this.keyboard.right)){
+      message += '-rightArrow';
+      this.keyboard.remove(this.keyboard.right)
+    }
+
+    if (this.keyboard.isDown(this.keyboard.down)){
+      message += '-downArrow';
+      this.keyboard.remove(this.keyboard.down)
+    }
+
+    if (this.keyboard.isDown(this.keyboard.left)){
+      message += '-leftArrow';
+      this.keyboard.remove(this.keyboard.left)
+    }
+
+    this.queue.add(message);
+
+    if (this.updateCustom) {
+      this.updateCustom();
+    }
+  }
+
+  render(ctx) {
+    this.spritesheet.play(this.currentAnimation, this.coordinates.x, this.coordinates.y, this.scale, true);
+
+    this.hud.healthBar.width = this.hud.healthBar.baseWidth * (this.stats.health/this.stats.maxHealth);
+    this.hud.energyBar.width = this.hud.energyBar.baseWidth * (this.stats.energy/this.stats.maxEnergy);
+    this.hud.combo.value = this.combo;
+    this.hud.render(ctx, this.mode);
+
+    if (this.renderCustom) {
+      this.renderCustom(ctx);
+    }
+  }
+
+  preAction(mode, keyPressed){
+    if (mode == 'defense') {
       this.mode = 'defense';
       this.currentAnimation = 'defense';
-    } else if (this.keyboard.isDown(this.keyboard.ultraMode)) {
+    } else if (mode == 'ultra') {
       this.defenseSuccess = false;
       this.mode = 'ultra';
       this.stats.decrease('energy', 1);
@@ -204,42 +246,16 @@ export default class {
       }
     }
 
-    if (this.keyboard.isDown(this.keyboard.up)){
-      this.action(upArrow, this.target, 'up');
-      this.keyboard.remove(this.keyboard.up)
+    if (!keyPressed) return;
+    const filterFunc = (arrow) => {
+      return !arrow.isDie
+             && (arrow.maxCoordinates.y - (arrow.coordinates.y + arrow.sprite.height)) < this.arrowHitboxRadius
+             && (arrow.maxCoordinates.y - arrow.coordinates.y) >= -this.arrowHitboxRadius
     }
+    const direction = keyPressed.replace('Arrow', '');
+    let arrow = this.arrowManager.getArrowIf(direction, 1, filterFunc)[0];
 
-    if (this.keyboard.isDown(this.keyboard.right)){
-      this.action(rightArrow, this.target, 'right');
-      this.keyboard.remove(this.keyboard.right)
-    }
-
-    if (this.keyboard.isDown(this.keyboard.down)){
-      this.action(downArrow, this.target, 'down');
-      this.keyboard.remove(this.keyboard.down)
-    }
-
-    if (this.keyboard.isDown(this.keyboard.left)){
-      this.action(leftArrow, this.target, 'left');
-      this.keyboard.remove(this.keyboard.left)
-    }
-
-    if (this.updateCustom) {
-      this.updateCustom();
-    }
-  }
-
-  render(ctx) {
-    this.spritesheet.play(this.currentAnimation, this.coordinates.x, this.coordinates.y, this.scale, true);
-
-    this.hud.healthBar.width = this.hud.healthBar.baseWidth * (this.stats.health/this.stats.maxHealth);
-    this.hud.energyBar.width = this.hud.energyBar.baseWidth * (this.stats.energy/this.stats.maxEnergy);
-    this.hud.combo.value = this.combo;
-    this.hud.render(ctx, this.mode);
-
-    if (this.renderCustom) {
-      this.renderCustom(ctx);
-    }
+    this.action(arrow, this.target, direction);
   }
 
 }

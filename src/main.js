@@ -32,6 +32,9 @@ import data from './data.json';
 import song from './assets/song/UnexpectedVibes.mp3';
 import pure from './assets/song/signal_pure.mp3';
 
+import { queue } from './class/Queue.singleton.js';
+
+
 let audioAnalyser = new Audio();
 
 audioAnalyser.loadSound({battleSong: song, pure});
@@ -97,6 +100,7 @@ let player1 = new Player({
   }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({}),
+  queue : queue,
   init() {
     let arrowHUD = directions.map( (direction, index) => {
       let arrow = new Sprite({
@@ -221,6 +225,7 @@ let player2 = new Player({
   }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({}),
+  queue : queue,
   init() {
     let arrowHUD = directions.reverse().map( (direction, index) => {
       let arrow = new Sprite({
@@ -303,6 +308,11 @@ player1.target = player2;
 player2.target = player1;
 
 GAME.update = function () {
+    for (var i = 0; i < 15; i++) {
+      let messageLeft = managePileEvent();
+      if (!messageLeft) break;
+    }
+
     // Check if both player are dead
     if (player1.isDie && player2.isDie) {
       message = "Egalité";
@@ -356,3 +366,17 @@ GAME.scene.push({
   update(){}
 });
 GAME.gameloop();
+
+function managePileEvent() {
+  let message = queue.getFirst();
+  if (!message) return;
+  message = message.split('-');
+
+  if (message[0] == player1.name) {
+    player1.preAction(message[1], message[2]);
+  } else if (message[0] == player2.name) {
+    player2.preAction(message[1], message[2]);
+  }
+
+  return message;
+}
