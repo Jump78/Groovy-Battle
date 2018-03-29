@@ -149,7 +149,7 @@ let player1 = new Player({
     }
 
     this.arrowManager.option.update = function(){
-      if (this.coordinates.y > this.maxCoordinates.y) {
+      if (this.coordinates.y > this.maxCoordinates.y + 25) {
         this.fade = true;
       }
     }
@@ -273,7 +273,7 @@ let player2 = new Player({
     }
 
     this.arrowManager.option.update = function(){
-      if (this.coordinates.y > this.maxCoordinates.y) {
+      if (this.coordinates.y > this.maxCoordinates.y + 25) {
         this.fade = true;
       }
     }
