@@ -71,11 +71,15 @@ export default class {
     spell.use(target, this.stats, isCrit, this.stats.comboMultiplier);
   }
 
-  defense (target) {
+  defense (target, isPerfect = false) {
     this.defenseSuccess = true;
-    target.isStun = true;
-    target.StunAt = Date.now();
     this.stats.increase('energy', 5);
+
+    if (isPerfect) {
+      target.currentAnimation = "stun";
+      target.isStun = true;
+      target.StunAt = Date.now();
+    }
   }
 
   action (arrow, target, direction) {
@@ -98,7 +102,12 @@ export default class {
       this.incantation.push(direction);
       this.hud.incantation.push(direction);
     } else if (this.mode == 'defense' && arrow){
-      this.defense(target);
+      let isPerfect = false;
+      if ( arrow.maxCoordinates.y - arrow.getCenter().y < this.critRange
+           && arrow.maxCoordinates.y - arrow.getCenter().y > -this.critRange ) {
+        isPerfect = true;
+      }
+      this.defense(target, isPerfect);
       this.combo++;
       if (!(this.combo%15)) {
         this.stats.increase('comboMultiplier', 0.5)
@@ -155,8 +164,9 @@ export default class {
       };
     });
 
-    if(Date.now() - this.StunAt > 2500) {
+    if(this.isStun && Date.now() - this.StunAt > 2500) {
       this.isStun = false;
+      this.currentAnimation = 'idle';
     }
 
     if (this.isStun) return;
