@@ -1,4 +1,4 @@
-export class Queue {
+export class EventManager {
 
   constructor() {
     this.queue = [];
@@ -13,4 +13,4 @@ export class Queue {
   }
 }
 
-export let queue = new Queue();
+export let eventManager = new EventManager();

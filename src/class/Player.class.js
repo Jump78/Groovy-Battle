@@ -49,7 +49,7 @@ export default class {
     this.isStun = false;
     this.StunAt = 0;
 
-    this.queue = option.queue || {};
+    this.eventManager = option.eventManager || {};
    }
 
   takeDamage( damage ){
@@ -203,7 +203,7 @@ export default class {
       this.keyboard.remove(this.keyboard.left)
     }
 
-    this.queue.add(message);
+    this.eventManager.add(message);
 
     if (this.updateCustom) {
       this.updateCustom();

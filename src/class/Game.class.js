@@ -22,6 +22,10 @@ export default class {
     this.lastArrowAt = Date.now();
 
     this.isRoundFinished = false;
+
+    this.online = option.online || false;
+
+    this.init();
   }
 
   /**

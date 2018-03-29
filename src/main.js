@@ -32,7 +32,7 @@ import data from './data.json';
 import song from './assets/song/UnexpectedVibes.mp3';
 import pure from './assets/song/signal_pure.mp3';
 
-import { queue } from './class/Queue.singleton.js';
+import { eventManager } from './class/EventManager.singleton.js';
 
 
 let audioAnalyser = new Audio();
@@ -47,7 +47,8 @@ const backgroundSprite = new Image();
 backgroundSprite.src = background;
 
 const GAME = new Game({
-  canvas: $('#game')
+  canvas: $('#game'),
+  online: false
 })
 
 let message = '';
@@ -100,7 +101,7 @@ let player1 = new Player({
   }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({}),
-  queue : queue,
+  eventManager : eventManager,
   init() {
     let arrowHUD = directions.map( (direction, index) => {
       let arrow = new Sprite({
@@ -225,7 +226,7 @@ let player2 = new Player({
   }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({}),
-  queue : queue,
+  eventManager : eventManager,
   init() {
     let arrowHUD = directions.reverse().map( (direction, index) => {
       let arrow = new Sprite({
@@ -368,7 +369,7 @@ GAME.scene.push({
 GAME.gameloop();
 
 function managePileEvent() {
-  let message = queue.getFirst();
+  let message = eventManager.getFirst();
   if (!message) return;
   message = message.split('-');
 
