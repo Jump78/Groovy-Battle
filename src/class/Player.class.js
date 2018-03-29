@@ -45,6 +45,9 @@ export default class {
     this.arrowHitboxRadius = option.arrowHitboxRadius || 30;
     this.critRange = option.critRange || 3;
     this.roundWon = 0;
+
+    this.isStun = false;
+    this.StunAt = 0;
   }
 
   takeDamage( damage ){
@@ -68,8 +71,10 @@ export default class {
     spell.use(target, this.stats, isCrit, this.stats.comboMultiplier);
   }
 
-  defense () {
+  defense (target) {
     this.defenseSuccess = true;
+    target.isStun = true;
+    target.StunAt = Date.now();
     this.stats.increase('energy', 5);
   }
 
@@ -93,7 +98,7 @@ export default class {
       this.incantation.push(direction);
       this.hud.incantation.push(direction);
     } else if (this.mode == 'defense' && arrow){
-      this.defense();
+      this.defense(target);
       this.combo++;
       if (!(this.combo%15)) {
         this.stats.increase('comboMultiplier', 0.5)
@@ -140,6 +145,21 @@ export default class {
     if (this.stats.health <= 0) {
       this.isDie = true;
     }
+
+    const self = this;
+    this.currentArrows.forEach( item => {
+      item.update();
+      if (item.isDie) {
+        self.currentArrows.splice(self.currentArrows.indexOf(item), 1)
+        self.hud.dynamicArrows.splice(self.hud.dynamicArrows.indexOf(item), 1)
+      };
+    });
+
+    if(Date.now() - this.StunAt > 2500) {
+      this.isStun = false;
+    }
+
+    if (this.isStun) return;
 
     const filterFunc = (arrow) => {
       return !arrow.isDie
@@ -193,15 +213,6 @@ export default class {
       this.action(leftArrow, this.target, 'left');
       this.keyboard.remove(this.keyboard.left)
     }
-
-    const self = this;
-    this.currentArrows.forEach( item => {
-      item.update();
-      if (item.isDie) {
-        self.currentArrows.splice(self.currentArrows.indexOf(item), 1)
-        self.hud.dynamicArrows.splice(self.hud.dynamicArrows.indexOf(item), 1)
-      };
-    });
 
     if (this.updateCustom) {
       this.updateCustom();
