@@ -33,6 +33,7 @@ import song from './assets/song/UnexpectedVibes.mp3';
 import pure from './assets/song/signal_pure.mp3';
 
 import { eventManager } from './class/EventManager.singleton.js';
+import { eventManagerOnline } from './class/EventManagerOnline.singleton.js';
 
 
 let audioAnalyser = new Audio();
