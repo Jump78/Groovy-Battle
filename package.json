@@ -4,7 +4,7 @@
   "description": "Projet étudiant",
   "main": "main.js",
   "scripts": {
-    "dev": "webpack-dev-server --open --inline --config config/webpack.dev.config.js",
+    "dev": "webpack-dev-server --host 0.0.0.0 --open --inline --config config/webpack.dev.config.js",
     "build": "webpack --config config/webpack.prod.config.js"
   },
   "author": "Clément Teboul",
