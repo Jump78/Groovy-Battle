@@ -32,7 +32,6 @@ import data from './data.json';
 import song from './assets/song/UnexpectedVibes.mp3';
 import pure from './assets/song/signal_pure.mp3';
 
-import { eventManager } from './class/EventManager.singleton.js';
 import { eventManagerOnline } from './class/EventManagerOnline.singleton.js';
 
 
@@ -102,7 +101,7 @@ let player1 = new Player({
   }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({}),
-  eventManager : eventManager,
+  eventManager : eventManagerOnline,
   init() {
     let arrowHUD = directions.map( (direction, index) => {
       let arrow = new Sprite({
@@ -227,7 +226,7 @@ let player2 = new Player({
   }),
   spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
   arrowManager: new ArrowManager({}),
-  eventManager : eventManager,
+  eventManager : eventManagerOnline,
   init() {
     let arrowHUD = directions.reverse().map( (direction, index) => {
       let arrow = new Sprite({
@@ -321,7 +320,7 @@ GAME.update = function () {
       this.isRoundFinished = true;
       this.resetRound(player1, player2);
 
-    } else if (player1.isDie || player2.isDie){ // Check if one player is dead
+    } else if ((player1.isDie || player2.isDie) && !this.isRoundFinished){ // Check if one player is dead
       const winner = (player1.isDie)? player2 : player1; // Find the player who's dead
       winner.roundWon++;
       this.isRoundFinished = true;
@@ -370,14 +369,19 @@ GAME.scene.push({
 GAME.gameloop();
 
 function managePileEvent() {
-  let message = eventManager.getFirst();
+  let message = eventManagerOnline.getFirst();
   if (!message) return;
-  message = message.split('-');
 
-  if (message[0] == player1.name) {
-    player1.preAction(message[1], message[2]);
-  } else if (message[0] == player2.name) {
-    player2.preAction(message[1], message[2]);
+  if (message.player == 1) {
+    player1.receiveAction(message);
+  } else if(message.player == 2){
+    player2.receiveAction(message);
+  } else {
+    if (eventManagerOnline.id == 1) {
+      player1.receiveAction(message);
+    } else if (eventManagerOnline.id == 2) {
+      player2.receiveAction(message);
+    }
   }
 
   return message;

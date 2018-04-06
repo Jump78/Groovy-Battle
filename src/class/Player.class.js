@@ -29,7 +29,7 @@ export default class {
     this.renderCustom = option.render || defaultFunc;
     this.initCustom = option.init || defaultFunc;
 
-    this.mode = 'idle';
+    this.mode = 'attack';
     this.defenseSuccess = false;
 
     this.isUltraMode = false;
@@ -50,7 +50,7 @@ export default class {
     this.StunAt = 0;
 
     this.eventManager = option.eventManager || {};
-   }
+  }
 
   takeDamage( damage ){
     let realDamage = damage;
@@ -84,37 +84,89 @@ export default class {
     }
   }
 
+  attackModeAction( arrow, target ) {
+    let isCrit = false;
+    if ( arrow.maxCoordinates.y - arrow.getCenter().y < this.critRange
+         && arrow.maxCoordinates.y - arrow.getCenter().y > -this.critRange ) {
+      isCrit = true;
+    }
+    this.eventManager.add({
+      type: 'attack',
+      spell : this.spells[0].name,
+      isCrit,
+    });
+    arrow.die();
+  }
+
+  defenseModeAction( arrow, target ) {
+    let isPerfect = false;
+    if ( arrow.maxCoordinates.y - arrow.getCenter().y < this.critRange
+         && arrow.maxCoordinates.y - arrow.getCenter().y > -this.critRange ) {
+      isPerfect = true;
+    }
+    //this.defense(target, isPerfect);
+    this.eventManager.add({
+      type: 'defense',
+      spell : null,
+      isCrit : isPerfect,
+    });
+    this.combo++;
+    if (!(this.combo%15)) {
+      this.stats.increase('comboMultiplier', 0.5)
+    }
+    arrow.die();
+  }
+
+  receiveAction( message ) {
+    // observers.each do |ob|
+    //   ob.receiveAction(message)
+    // end
+
+    if (message.type == 'attack') {
+      // const filterFunc = (arrow) => {
+      //   return !arrow.isDie
+      //          && (arrow.maxCoordinates.y - (arrow.coordinates.y + arrow.sprite.height)) < this.arrowHitboxRadius
+      //          && (arrow.maxCoordinates.y - arrow.coordinates.y) >= -this.arrowHitboxRadius
+      // }
+      //
+      // let arrow = this.arrowManager.getArrowIf('up', 1, filterFunc)[0];
+      let spell =  this.spells.filter( item => message.spell == item.name)[0];
+      this.attack((spell.self)? this : this.target, spell, message.isCrit);
+      if (spell.name == 'Basic attack') {
+        this.stats.increase('energy', 5);
+        this.currentAnimation = 'attack';
+        this.lastArrowItAt = Date.now();
+        this.combo++;
+      }
+      if (!(this.combo%15)) {
+        this.stats.increase('comboMultiplier', 0.5)
+      }
+      //arrow.die();
+    } else if (message.type == 'defense'){
+      this.defense(this.target, message.isCrit);
+      this.combo++;
+      if (!(this.combo%15)) {
+        this.stats.increase('comboMultiplier', 0.5)
+      }
+      //arrow.die();
+    } else if (message.type == 'changeMode') {
+      this.changeMode(message.mode);
+    } else if (message.type == 'addArrowIncantation'){
+      this.incantation.push(message.direction);
+      this.hud.incantation.push(message.direction);
+    }
+  }
+
   action (arrow, target, direction) {
     if (this.mode == 'attack' && arrow) {
-      let isCrit = false;
-      if ( arrow.maxCoordinates.y - arrow.getCenter().y < this.critRange
-           && arrow.maxCoordinates.y - arrow.getCenter().y > -this.critRange ) {
-        isCrit = true;
-      }
-      this.attack(target, this.spells[0], isCrit)
-      this.stats.increase('energy', 5);
-      this.currentAnimation = 'attack';
-      this.lastArrowItAt = Date.now();
-      this.combo++;
-      if (!(this.combo%15)) {
-        this.stats.increase('comboMultiplier', 0.5)
-      }
-      arrow.die();
+      this.attackModeAction( arrow, target);
     } else if (this.mode == 'ultra') {
-      this.incantation.push(direction);
-      this.hud.incantation.push(direction);
+      this.eventManager.add({
+        type: 'addArrowIncantation',
+        direction : direction
+      });
     } else if (this.mode == 'defense' && arrow){
-      let isPerfect = false;
-      if ( arrow.maxCoordinates.y - arrow.getCenter().y < this.critRange
-           && arrow.maxCoordinates.y - arrow.getCenter().y > -this.critRange ) {
-        isPerfect = true;
-      }
-      this.defense(target, isPerfect);
-      this.combo++;
-      if (!(this.combo%15)) {
-        this.stats.increase('comboMultiplier', 0.5)
-      }
-      arrow.die();
+      this.defenseModeAction( arrow, target);
     }
   }
 
@@ -122,11 +174,15 @@ export default class {
     if (incantation.length <= 0) return;
     let spell = this.spells.filter( spell => spell.incantation.toString() == incantation.toString())[0];
     if (spell){
+      let target = this.target;
       if (spell.self) {
-        this.attack(this, spell);
-      } else {
-        this.attack(this.target, spell);
+        target = this;
       }
+      this.eventManager.add({
+        type: 'attack',
+        spell : spell.name,
+        isCrit : false,
+      });
     }
     return false
   }
@@ -152,6 +208,29 @@ export default class {
     }
   }
 
+  changeMode(mode) {
+    if (this.mode == mode) return;
+
+    if (mode == 'defense') {
+      this.mode = 'defense';
+      this.currentAnimation = 'defense';
+    }
+
+    if (mode == 'ultra') {
+      this.defenseSuccess = false;
+      this.mode = 'ultra';
+      this.currentAnimation = 'idle';
+    }
+
+    if (mode == 'attack') {
+      this.incantation = [];
+      this.hud.incantation = [];
+      this.defenseSuccess = false;
+      this.mode = 'attack';
+      this.currentAnimation = 'idle';
+    }
+  }
+
   update() {
     if (this.stats.health <= 0) {
       this.isDie = true;
@@ -173,37 +252,85 @@ export default class {
 
     if (this.isStun) return;
 
-    let message = this.name;
+    const filterFunc = (arrow) => {
+      return !arrow.isDie
+             && (arrow.maxCoordinates.y - (arrow.coordinates.y + arrow.sprite.height)) < this.arrowHitboxRadius
+             && (arrow.maxCoordinates.y - arrow.coordinates.y) >= -this.arrowHitboxRadius
+    }
+
+    let upArrow = this.arrowManager.getArrowIf('up', 1, filterFunc)[0];
+    let rightArrow = this.arrowManager.getArrowIf('right', 1, filterFunc)[0];
+    let downArrow = this.arrowManager.getArrowIf('down', 1, filterFunc)[0];
+    let leftArrow = this.arrowManager.getArrowIf('left', 1, filterFunc)[0];
+
+    if (this.mode == 'ultra') {
+      //this.stats.decrease('energy', 1);
+      if (this.stats.energy <= 0) {
+        this.eventManager.add({
+          type: 'changeMode',
+          mode: 'attack',
+        });
+      }
+    }
+
+    if (this.mode == 'attack' && Date.now() - this.lastArrowItAt > 700) {
+      this.currentAnimation = 'idle';
+    }
 
     if (this.keyboard.isDown(this.keyboard.defenseMode)) {
-      message += '-defense';
-    } else if (this.keyboard.isDown(this.keyboard.ultraMode)) {
-      message += '-ultra';
-    } else {
-      message += '-attack';
+      if (this.mode == 'attack'){
+        this.eventManager.add({
+          type: 'changeMode',
+          mode: 'defense',
+        });
+      }
+    } else if (this.stats.energy > 0 && this.keyboard.isDown(this.keyboard.ultraMode)) {
+      if (this.mode == 'attack') {
+        this.eventManager.add({
+          type: 'changeMode',
+          mode: 'ultra',
+        });
+      }
+    }
+
+    if (this.keyboard.isUp(this.keyboard.defenseMode)) {
+      this.eventManager.add({
+        type: 'changeMode',
+        mode: 'attack',
+      });
+
+      this.keyboard.removeFromUnpressed(this.keyboard.defenseMode);
+    }
+
+    if (this.keyboard.isUp(this.keyboard.ultraMode)) {
+      this.cast(this.incantation);
+      this.eventManager.add({
+        type: 'changeMode',
+        mode: 'attack',
+      });
+
+      this.keyboard.removeFromUnpressed(this.keyboard.ultraMode);
     }
 
     if (this.keyboard.isDown(this.keyboard.up)){
-      message += '-upArrow';
-      this.keyboard.remove(this.keyboard.up)
+      this.action(upArrow, this.target, 'up');
+      this.keyboard.removeFromPressed(this.keyboard.up)
     }
 
     if (this.keyboard.isDown(this.keyboard.right)){
-      message += '-rightArrow';
-      this.keyboard.remove(this.keyboard.right)
+      this.action(rightArrow, this.target, 'right');
+      this.keyboard.removeFromPressed(this.keyboard.right)
     }
 
     if (this.keyboard.isDown(this.keyboard.down)){
-      message += '-downArrow';
-      this.keyboard.remove(this.keyboard.down)
+      this.action(downArrow, this.target, 'down');
+      this.keyboard.removeFromPressed(this.keyboard.down)
     }
 
     if (this.keyboard.isDown(this.keyboard.left)){
-      message += '-leftArrow';
-      this.keyboard.remove(this.keyboard.left)
+      this.action(leftArrow, this.target, 'left');
+      this.keyboard.removeFromPressed(this.keyboard.left)
     }
-
-    this.eventManager.add(message);
 
     if (this.updateCustom) {
       this.updateCustom();
@@ -222,40 +349,4 @@ export default class {
       this.renderCustom(ctx);
     }
   }
-
-  preAction(mode, keyPressed){
-    if (mode == 'defense') {
-      this.mode = 'defense';
-      this.currentAnimation = 'defense';
-    } else if (mode == 'ultra') {
-      this.defenseSuccess = false;
-      this.mode = 'ultra';
-      this.stats.decrease('energy', 1);
-      this.currentAnimation = 'idle';
-      if (this.stats.energy <= 0) {
-        this.mode = 'attack';
-      }
-    } else {
-      this.defenseSuccess = false;
-      this.mode = 'attack';
-      this.cast(this.incantation);
-      this.incantation = [];
-      this.hud.incantation = [];
-      if (Date.now() - this.lastArrowItAt > 700) {
-        this.currentAnimation = 'idle';
-      }
-    }
-
-    if (!keyPressed) return;
-    const filterFunc = (arrow) => {
-      return !arrow.isDie
-             && (arrow.maxCoordinates.y - (arrow.coordinates.y + arrow.sprite.height)) < this.arrowHitboxRadius
-             && (arrow.maxCoordinates.y - arrow.coordinates.y) >= -this.arrowHitboxRadius
-    }
-    const direction = keyPressed.replace('Arrow', '');
-    let arrow = this.arrowManager.getArrowIf(direction, 1, filterFunc)[0];
-
-    this.action(arrow, this.target, direction);
-  }
-
 }
