@@ -8,6 +8,7 @@ import $ from 'jquery';
 export default class {
   constructor( option = {} ) {
     this.pressed = {};
+    this.unpressed = {};
 
     this.up = option.up || 90;
     this.right = option.right || 68;
@@ -18,10 +19,12 @@ export default class {
 
     $('body').on('keydown', (e) => {
       this.pressed[e.keyCode] = true;
+      this.removeFromUnpressed(e.keyCode)
     });
 
     $('body').on('keyup', (e) => {
-      this.remove(e.keyCode)
+      this.unpressed[e.keyCode] = true;
+      this.removeFromPressed(e.keyCode)
     });
   }
 
@@ -29,7 +32,15 @@ export default class {
     return this.pressed[keyCode];
   }
 
-  remove(keyCode){
+  isUp (keyCode) {
+    return this.unpressed[keyCode];
+  }
+
+  removeFromPressed(keyCode){
     delete this.pressed[keyCode];
+  }
+
+  removeFromUnpressed(keyCode){
+    delete this.unpressed[keyCode];
   }
 }
