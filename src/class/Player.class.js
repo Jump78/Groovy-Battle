@@ -95,7 +95,6 @@ export default class {
       spell : this.spells[0].name,
       isCrit,
     });
-    arrow.die();
   }
 
   defenseModeAction( arrow, target ) {
@@ -104,7 +103,6 @@ export default class {
          && arrow.maxCoordinates.y - arrow.getCenter().y > -this.critRange ) {
       isPerfect = true;
     }
-    //this.defense(target, isPerfect);
     this.eventManager.add({
       type: 'defense',
       spell : null,
@@ -114,7 +112,6 @@ export default class {
     if (!(this.combo%15)) {
       this.stats.increase('comboMultiplier', 0.5)
     }
-    arrow.die();
   }
 
   receiveAction( message ) {
@@ -123,13 +120,13 @@ export default class {
     // end
 
     if (message.type == 'attack') {
-      // const filterFunc = (arrow) => {
-      //   return !arrow.isDie
-      //          && (arrow.maxCoordinates.y - (arrow.coordinates.y + arrow.sprite.height)) < this.arrowHitboxRadius
-      //          && (arrow.maxCoordinates.y - arrow.coordinates.y) >= -this.arrowHitboxRadius
-      // }
-      //
-      // let arrow = this.arrowManager.getArrowIf('up', 1, filterFunc)[0];
+      const filterFunc = (arrow) => {
+        return !arrow.isDie
+               && (arrow.maxCoordinates.y - (arrow.coordinates.y + arrow.sprite.height)) < this.arrowHitboxRadius
+               && (arrow.maxCoordinates.y - arrow.coordinates.y) >= -this.arrowHitboxRadius
+      }
+
+      let arrow = this.currentArrows.filter(filterFunc)[0];
       let spell =  this.spells.filter( item => message.spell == item.name)[0];
       this.attack((spell.self)? this : this.target, spell, message.isCrit);
       if (spell.name == 'Basic attack') {
@@ -141,14 +138,21 @@ export default class {
       if (!(this.combo%15)) {
         this.stats.increase('comboMultiplier', 0.5)
       }
-      //arrow.die();
+      arrow.die();
     } else if (message.type == 'defense'){
+      const filterFunc = (arrow) => {
+        return !arrow.isDie
+               && (arrow.maxCoordinates.y - (arrow.coordinates.y + arrow.sprite.height)) < this.arrowHitboxRadius
+               && (arrow.maxCoordinates.y - arrow.coordinates.y) >= -this.arrowHitboxRadius
+      }
+
+      let arrow = this.currentArrows.filter(filterFunc)[0];
       this.defense(this.target, message.isCrit);
       this.combo++;
       if (!(this.combo%15)) {
         this.stats.increase('comboMultiplier', 0.5)
       }
-      //arrow.die();
+      arrow.die();
     } else if (message.type == 'changeMode') {
       this.changeMode(message.mode);
     } else if (message.type == 'addArrowIncantation'){
