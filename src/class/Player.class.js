@@ -108,10 +108,6 @@ export default class {
       spell : null,
       isCrit : isPerfect,
     });
-    this.combo++;
-    if (!(this.combo%15)) {
-      this.stats.increase('comboMultiplier', 0.5)
-    }
   }
 
   receiveAction( message ) {
