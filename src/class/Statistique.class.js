@@ -1,8 +1,8 @@
 ///TODO function init Value
 export default class {
   constructor( option = {} ) {
-    this.health = option.health || option.maxHealth || 75;
-    this.maxHealth = option.maxHealth || 75;
+    this.health = option.health || option.maxHealth || 25;
+    this.maxHealth = option.maxHealth || 25;
     this.minHealth = option.minHealth || 0;
 
     this.energy = option.energy || option.maxEnergy || 100;
