@@ -91,6 +91,7 @@ export default class {
       isCrit = true;
     }
     this.eventManager.add({
+      playerName: this.name,
       type: 'attack',
       spell : this.spells[0].name,
       isCrit,
@@ -104,6 +105,7 @@ export default class {
       isPerfect = true;
     }
     this.eventManager.add({
+      playerName: this.name,
       type: 'defense',
       spell : null,
       isCrit : isPerfect,
@@ -162,6 +164,7 @@ export default class {
       this.attackModeAction( arrow, target);
     } else if (this.mode == 'ultra') {
       this.eventManager.add({
+        playerName: this.name,
         type: 'addArrowIncantation',
         direction : direction
       });
@@ -179,6 +182,7 @@ export default class {
         target = this;
       }
       this.eventManager.add({
+        playerName: this.name,
         type: 'attack',
         spell : spell.name,
         isCrit : false,
@@ -267,6 +271,7 @@ export default class {
       //this.stats.decrease('energy', 1);
       if (this.stats.energy <= 0) {
         this.eventManager.add({
+          playerName: this.name,
           type: 'changeMode',
           mode: 'attack',
         });
@@ -280,6 +285,7 @@ export default class {
     if (this.keyboard.isDown(this.keyboard.defenseMode)) {
       if (this.mode == 'attack'){
         this.eventManager.add({
+          playerName: this.name,
           type: 'changeMode',
           mode: 'defense',
         });
@@ -287,6 +293,7 @@ export default class {
     } else if (this.stats.energy > 0 && this.keyboard.isDown(this.keyboard.ultraMode)) {
       if (this.mode == 'attack') {
         this.eventManager.add({
+          playerName: this.name,
           type: 'changeMode',
           mode: 'ultra',
         });
@@ -295,6 +302,7 @@ export default class {
 
     if (this.keyboard.isUp(this.keyboard.defenseMode)) {
       this.eventManager.add({
+        playerName: this.name,
         type: 'changeMode',
         mode: 'attack',
       });
@@ -305,6 +313,7 @@ export default class {
     if (this.keyboard.isUp(this.keyboard.ultraMode)) {
       this.cast(this.incantation);
       this.eventManager.add({
+        playerName: this.name,
         type: 'changeMode',
         mode: 'attack',
       });
