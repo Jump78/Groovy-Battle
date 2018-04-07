@@ -4,7 +4,10 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
   entry: {
-    app: './src/main.js'
+    index: './src/main.js',
+    online: './src/oneline.js',
+    locale: './src/locale.js',
+    option: './src/option.js'
   },
   output: {
     filename: '[name].bundle.js',
@@ -21,6 +24,13 @@ module.exports = {
       {
         test: /\.(png|svg|jpg|gif)$/,
         use: 'file-loader',
+      },
+      {
+        test: /\.css$/,
+        use: [
+          { loader: "style-loader/url" },
+          { loader: "file-loader" }
+        ]
       },
       {
         test: /\.(mp3|wave|mp4)$/,

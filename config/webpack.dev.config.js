@@ -18,7 +18,13 @@ module.exports = merge(common, {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
-      inject: true
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'option.html',
+      template: 'option.html',
+      chunks: ['option'],
+      inject: false
     }),
   ]
 });
