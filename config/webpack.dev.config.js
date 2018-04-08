@@ -31,5 +31,12 @@ module.exports = merge(common, {
       template: 'locale.html',
       chunks: ['locale'],
       inject: false
-    }),  ]
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'online.html',
+      template: 'online.html',
+      chunks: ['online'],
+      inject: false
+    })
+  ]
 });

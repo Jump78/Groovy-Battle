@@ -21,7 +21,7 @@ export default class {
     this.score = option.score || 0;
     this.combo = option.combo || 0;
 
-    this.keyboard = option.keyboard || {};
+    this.keyboard = option.keyboard || null;
 
     this.arrowManager = option.arrowManager || {};
 
@@ -282,63 +282,66 @@ export default class {
       this.currentAnimation = 'idle';
     }
 
-    if (this.keyboard.isDown(this.keyboard.defenseMode)) {
-      if (this.mode == 'attack'){
+    if (this.keyboard){
+      if (this.keyboard.isDown(this.keyboard.defenseMode)) {
+        if (this.mode == 'attack'){
+          this.eventManager.add({
+            playerName: this.name,
+            type: 'changeMode',
+            mode: 'defense',
+          });
+        }
+      } else if (this.stats.energy > 0 && this.keyboard.isDown(this.keyboard.ultraMode)) {
+        if (this.mode == 'attack') {
+          this.eventManager.add({
+            playerName: this.name,
+            type: 'changeMode',
+            mode: 'ultra',
+          });
+        }
+      }
+
+      if (this.keyboard.isUp(this.keyboard.defenseMode)) {
         this.eventManager.add({
           playerName: this.name,
           type: 'changeMode',
-          mode: 'defense',
+          mode: 'attack',
         });
+
+        this.keyboard.removeFromUnpressed(this.keyboard.defenseMode);
       }
-    } else if (this.stats.energy > 0 && this.keyboard.isDown(this.keyboard.ultraMode)) {
-      if (this.mode == 'attack') {
+
+      if (this.keyboard.isUp(this.keyboard.ultraMode)) {
+        this.cast(this.incantation);
         this.eventManager.add({
           playerName: this.name,
           type: 'changeMode',
-          mode: 'ultra',
+          mode: 'attack',
         });
+
+        this.keyboard.removeFromUnpressed(this.keyboard.ultraMode);
       }
-    }
 
-    if (this.keyboard.isUp(this.keyboard.defenseMode)) {
-      this.eventManager.add({
-        playerName: this.name,
-        type: 'changeMode',
-        mode: 'attack',
-      });
+      if (this.keyboard.isDown(this.keyboard.up)){
+        this.action(upArrow, this.target, 'up');
+        this.keyboard.removeFromPressed(this.keyboard.up)
+      }
 
-      this.keyboard.removeFromUnpressed(this.keyboard.defenseMode);
-    }
+      if (this.keyboard.isDown(this.keyboard.right)){
+        this.action(rightArrow, this.target, 'right');
+        this.keyboard.removeFromPressed(this.keyboard.right)
+      }
 
-    if (this.keyboard.isUp(this.keyboard.ultraMode)) {
-      this.cast(this.incantation);
-      this.eventManager.add({
-        playerName: this.name,
-        type: 'changeMode',
-        mode: 'attack',
-      });
+      if (this.keyboard.isDown(this.keyboard.down)){
+        this.action(downArrow, this.target, 'down');
+        this.keyboard.removeFromPressed(this.keyboard.down)
+      }
 
-      this.keyboard.removeFromUnpressed(this.keyboard.ultraMode);
-    }
+      if (this.keyboard.isDown(this.keyboard.left)){
+        this.action(leftArrow, this.target, 'left');
+        this.keyboard.removeFromPressed(this.keyboard.left)
+      }
 
-    if (this.keyboard.isDown(this.keyboard.up)){
-      this.action(upArrow, this.target, 'up');
-      this.keyboard.removeFromPressed(this.keyboard.up)
-    }
-
-    if (this.keyboard.isDown(this.keyboard.right)){
-      this.action(rightArrow, this.target, 'right');
-      this.keyboard.removeFromPressed(this.keyboard.right)
-    }
-
-    if (this.keyboard.isDown(this.keyboard.down)){
-      this.action(downArrow, this.target, 'down');
-      this.keyboard.removeFromPressed(this.keyboard.down)
-    }
-
-    if (this.keyboard.isDown(this.keyboard.left)){
-      this.action(leftArrow, this.target, 'left');
-      this.keyboard.removeFromPressed(this.keyboard.left)
     }
 
     if (this.updateCustom) {

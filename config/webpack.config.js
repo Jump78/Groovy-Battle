@@ -5,7 +5,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 module.exports = {
   entry: {
     index: './src/main.js',
-    online: './src/oneline.js',
+    online: './src/online.js',
     locale: './src/locale.js',
     option: './src/option.js'
   },
