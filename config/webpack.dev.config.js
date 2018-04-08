@@ -26,5 +26,10 @@ module.exports = merge(common, {
       chunks: ['option'],
       inject: false
     }),
-  ]
+    new HtmlWebpackPlugin({
+      filename: 'locale.html',
+      template: 'locale.html',
+      chunks: ['locale'],
+      inject: false
+    }),  ]
 });
