@@ -1,4 +1,5 @@
 import mainCss from "./assets/style/main.css";
+import indexCss from "./assets/style/index.css";
 import logo from "./assets/img/groovybattlelogo.png";
 
 import $ from 'jquery';
@@ -22,7 +23,7 @@ $(function() {
       defenseMode : 16,
       ultraMode: 32
     }
-    localStorage.setItem('player1Controle', JSON.stringify(player1Controle))
+    localStorage.setItem('player1Controle', JSON.stringify(player1Controle));
   }
 
   if (!player2Controle) {
@@ -31,9 +32,9 @@ $(function() {
       right: 76,
       down: 75,
       left: 74,
-      defenseMode:223,
-      ultraMode:188
+      defenseMode: 223,
+      ultraMode: 188
     }
-    localStorage.setItem('player2Controle', JSON.stringify(player2Controle))
+    localStorage.setItem('player2Controle', JSON.stringify(player2Controle));
   }
 })

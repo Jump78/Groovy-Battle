@@ -1,0 +1,28 @@
+.menu{
+  display: flex;
+  list-style: none;
+  flex-direction: column;
+  margin-top: 5vh;
+  font-size: 1.3em;
+}
+
+.menu-item{
+  align-self: center;
+  max-width: 10vw;
+  padding: 10px 50px;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 2vh 0;
+}
+
+.menu-item p {
+  user-select: none;
+}
+
+.menu-item:hover{
+  background-color: #69bbc1;
+}
+
+.margin-top-10vh{
+  margin-top: 10vh;
+}

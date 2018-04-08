@@ -1,4 +1,5 @@
 import mainCss from "./assets/style/main.css";
+import optionCss from "./assets/style/option.css";
 import logo from "./assets/img/groovybattlelogo.png";
 
 import $ from 'jquery';
@@ -181,26 +182,8 @@ $(function() {
   let player1Controle = JSON.parse(localStorage.getItem('player1Controle'));
   let player2Controle = JSON.parse(localStorage.getItem('player2Controle'));
 
-  if (!player1Controle) {
-    player1Controle = {
-      up : 90,
-      right : 68,
-      down : 83,
-      left : 81,
-      defenseMode : 16,
-      ultraMode: 32
-    }
-  }
-
-  if (!player2Controle) {
-    player2Controle = {
-      up: 73,
-      right: 76,
-      down: 75,
-      left: 74,
-      defenseMode:223,
-      ultraMode:188
-    }
+  if (!player1Controle || !player2Controle) {
+    window.location = '/';
   }
 
   const j1Input = $('form.input-j1 input');
@@ -220,7 +203,7 @@ $(function() {
     $(input).val(keyboardMap[event.keyCode]);
     player1Controle[input.attr('name')] = event.keyCode;
 
-    localStorage.setItem('player1Controle', JSON.stringify(player1Controle))
+    localStorage.setItem('player1Controle', JSON.stringify(player1Controle));
   })
 
   $('form.input-j2').on('keyup', 'input', function(event){
@@ -229,6 +212,6 @@ $(function() {
     $(input).val(keyboardMap[event.keyCode]);
     player2Controle[input.attr('name')] = event.keyCode;
 
-    localStorage.setItem('player2Controle', JSON.stringify(player2Controle))
+    localStorage.setItem('player2Controle', JSON.stringify(player2Controle));
   })
 });
