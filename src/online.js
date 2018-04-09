@@ -251,7 +251,7 @@ $(function() {
       let arrowsGuardHUD = directions.map( (direction, index) => {
         let arrow = new Sprite({
           coordinates: {
-            x: 50*index,
+            x: -50*index - 50,
             y: 200
           },
           img: guardArrowSprite['guardArrow'+direction.replace(direction[0], direction[0].toUpperCase())]
