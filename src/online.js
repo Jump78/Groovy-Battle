@@ -50,7 +50,8 @@ $(function() {
 
   const GAME = new Game({
     canvas: $('#game'),
-    online: false
+    online: false,
+    isPaused: true
   })
 
   let message = '';
@@ -100,12 +101,7 @@ $(function() {
     arrowManager: new ArrowManager({}),
     eventManager: eventManagerOnline,
     init() {
-      const self = this;
-      setTimeout(function(){
-        if (eventManagerOnline.id == 1) {
-          self.keyboard = new Keyboard(JSON.parse(localStorage.getItem('player1Controle')));
-        }
-      }, 150)
+      this.keyboard = new Keyboard(JSON.parse(localStorage.getItem('player1Controle')));
 
       let arrowHUD = directions.map( (direction, index) => {
         let arrow = new Sprite({
@@ -182,141 +178,152 @@ $(function() {
   })
   player1.init();
 
+  eventManagerOnline.init();
 
-  let player2 = new Player({
-    name: 'Player2',
-    coordinates: {
-      x: GAME.canvas.parent().width()/2 - 20,
-      y: 325
-    },
-    spells: data.spells.map( spell => new Spell(spell)),
-    stats: new Statistique(),
-    scale: {x:2, y:2},
-    hud: new HUD({
+  let player2 = null;
+  eventManagerOnline.onNewPlayer = function(){
+    player2 = new Player({
+      name: 'Player2',
       coordinates: {
-        x: GAME.canvas.width() - 10,
-        y: 10
+        x: GAME.canvas.parent().width()/2 - 20,
+        y: 325
       },
-      scale: {x:-1, y:1},
-      healthBar:{
-        x: 0,
-        y: 10,
-        width: 250,
-        baseWidth: 250,
-        height: 10,
-        baseHeight: 10,
-        color: '#FF0000'
-      },
-      energyBar:{
-        x: 0,
-        y: 20,
-        width: 150,
-        baseWidth: 150,
-        height: 10,
-        baseHeight: 10,
-        color: '#0000FF'
-      },
-      combo: {
-        x: 225,
-        y: 50,
-        color: '#BADA55',
-        font: "30px Impact",
-        textAlign: "right",
-        value: 0
-      }
-    }),
-    spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
-    arrowManager: new ArrowManager({}),
-    eventManager : eventManagerOnline,
-    init() {
-      const self = this;
-      setTimeout(function(){
-        if (eventManagerOnline.id == 2) {
-          self.keyboard = new Keyboard(JSON.parse(localStorage.getItem('player2Controle')));
-        }
-      }, 150)
-
-      let arrowHUD = directions.reverse().map( (direction, index) => {
-        let arrow = new Sprite({
-          coordinates: {
-            x: -50*index - 50,
-            y: 200
-          },
-          img: arrowSprite[direction+'ArrowBorderImg']
-        });
-        arrow.direction = direction;
-        return arrow;
-      });
-
-      let arrowsGuardHUD = directions.map( (direction, index) => {
-        let arrow = new Sprite({
-          coordinates: {
-            x: -50*index - 50,
-            y: 200
-          },
-          img: guardArrowSprite['guardArrow'+direction.replace(direction[0], direction[0].toUpperCase())]
-        });
-        arrow.direction = direction;
-        return arrow;
-      });
-
-      let arrowsSpriteHUDPull = []
-
-      let directionNumber = -1;
-      while (arrowsSpriteHUDPull.length < 40 ) {
-        if (!(arrowsSpriteHUDPull.length % 10) ) {
-          directionNumber++;
-        }
-        let arrow = new Sprite({
-          idDie: true,
-          coordinates: {
-            x:0,
-            y:0
-          },
-          img: arrowSprite[directions[directionNumber]+'ArrowBorderImg']
-        });
-        arrow.direction = directions[directionNumber];
-
-        arrowsSpriteHUDPull.push(arrow);
-      }
-
-      this.arrowManager.option.init = function(){
-        let arrowDesti = arrowHUD.filter( arrow => arrow.direction == this.direction)[0];
-        this.maxCoordinates.y = arrowDesti.getCenter().y;
-        this.coordinates.x = arrowDesti.coordinates.x;
-      }
-
-      this.arrowManager.option.update = function(){
-        if (this.coordinates.y > this.maxCoordinates.y + 25) {
-          this.fade = true;
-        }
-      }
-
-      const ultraModeSprite = new Sprite({
+      spells: data.spells.map( spell => new Spell(spell)),
+      stats: new Statistique(),
+      scale: {x:2, y:2},
+      hud: new HUD({
         coordinates: {
-          x: 0,
-          y: 40
+          x: GAME.canvas.width() - 10,
+          y: 10
         },
-        img: ultraModeImage
-      });
+        scale: {x:-1, y:1},
+        healthBar:{
+          x: 0,
+          y: 10,
+          width: 250,
+          baseWidth: 250,
+          height: 10,
+          baseHeight: 10,
+          color: '#FF0000'
+        },
+        energyBar:{
+          x: 0,
+          y: 20,
+          width: 150,
+          baseWidth: 150,
+          height: 10,
+          baseHeight: 10,
+          color: '#0000FF'
+        },
+        combo: {
+          x: 225,
+          y: 50,
+          color: '#BADA55',
+          font: "30px Impact",
+          textAlign: "right",
+          value: 0
+        }
+      }),
+      spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
+      arrowManager: new ArrowManager({}),
+      eventManager : eventManagerOnline,
+      init() {
+        let arrowHUD = directions.reverse().map( (direction, index) => {
+          let arrow = new Sprite({
+            coordinates: {
+              x: -50*index - 50,
+              y: 200
+            },
+            img: arrowSprite[direction+'ArrowBorderImg']
+          });
+          arrow.direction = direction;
+          return arrow;
+        });
 
-      this.hud.arrows = arrowHUD;
-      this.hud.arrowsGuard = arrowsGuardHUD;
-      this.hud.ultraModeBackground = ultraModeSprite;
-      this.hud.arrowsSpritePull = arrowsSpriteHUDPull;
+        let arrowsGuardHUD = directions.map( (direction, index) => {
+          let arrow = new Sprite({
+            coordinates: {
+              x: -50*index - 50,
+              y: 200
+            },
+            img: guardArrowSprite['guardArrow'+direction.replace(direction[0], direction[0].toUpperCase())]
+          });
+          arrow.direction = direction;
+          return arrow;
+        });
 
-      this.arrowManager.generate({}, 40);
-    },
-    update() {
-      if (this.isDie) return;
-    }
-  })
-  player2.init();
+        let arrowsSpriteHUDPull = []
 
-  player1.target = player2;
-  player2.target = player1;
+        let directionNumber = -1;
+        while (arrowsSpriteHUDPull.length < 40 ) {
+          if (!(arrowsSpriteHUDPull.length % 10) ) {
+            directionNumber++;
+          }
+          let arrow = new Sprite({
+            idDie: true,
+            coordinates: {
+              x:0,
+              y:0
+            },
+            img: arrowSprite[directions[directionNumber]+'ArrowBorderImg']
+          });
+          arrow.direction = directions[directionNumber];
+
+          arrowsSpriteHUDPull.push(arrow);
+        }
+
+        this.arrowManager.option.init = function(){
+          let arrowDesti = arrowHUD.filter( arrow => arrow.direction == this.direction)[0];
+          this.maxCoordinates.y = arrowDesti.getCenter().y;
+          this.coordinates.x = arrowDesti.coordinates.x;
+        }
+
+        this.arrowManager.option.update = function(){
+          if (this.coordinates.y > this.maxCoordinates.y + 25) {
+            this.fade = true;
+          }
+        }
+
+        const ultraModeSprite = new Sprite({
+          coordinates: {
+            x: 0,
+            y: 40
+          },
+          img: ultraModeImage
+        });
+
+        this.hud.arrows = arrowHUD;
+        this.hud.arrowsGuard = arrowsGuardHUD;
+        this.hud.ultraModeBackground = ultraModeSprite;
+        this.hud.arrowsSpritePull = arrowsSpriteHUDPull;
+
+        this.arrowManager.generate({}, 40);
+      },
+      update() {
+        if (this.isDie) return;
+      }
+    })
+    player2.init();
+
+    player1.target = player2;
+    player2.target = player1;
+
+    GAME.scene.push(player2);
+    GAME.isRoundFinished = true;
+    message = 'Ready ?';
+    setTimeout( _ => {
+      message = 'Go !!'
+      setTimeout ( _ => {
+        message = '';
+        GAME.isPaused = false;
+        GAME.isRoundFinished = false;
+      }, 500);
+    }, 1500)
+  }
 
   GAME.update = function () {
+      if (this.isPaused) return;
+
       for (var i = 0; i < 15; i++) {
         let messageLeft = managePileEvent();
         if (!messageLeft) break;
@@ -363,7 +370,6 @@ $(function() {
     update(){}
   });
   GAME.scene.push(player1);
-  GAME.scene.push(player2);
   GAME.scene.push({
     render(ctx) {
       if (!GAME.isRoundFinished) return;
@@ -380,16 +386,10 @@ $(function() {
     let message = eventManagerOnline.getFirst();
     if (!message) return;
 
-    if (message.player == 1) {
+    if (message.player == eventManagerOnline.id) {
       player1.receiveAction(message);
-    } else if(message.player == 2){
-      player2.receiveAction(message);
     } else {
-      if (eventManagerOnline.id == 1) {
-        player1.receiveAction(message);
-      } else if (eventManagerOnline.id == 2) {
-        player2.receiveAction(message);
-      }
+      player2.receiveAction(message);
     }
 
     return message;

@@ -24,6 +24,7 @@ export default class {
     this.isRoundFinished = false;
 
     this.online = option.online || false;
+    this.isPaused = option.isPaused || false;
 
     this.init();
   }
