@@ -1,3 +1,4 @@
+import mainCss from "./assets/style/main.css";
 import gameCss from "./assets/style/game.css";
 import $ from 'jquery';
 
@@ -36,6 +37,14 @@ import pure from './assets/song/signal_pure.mp3';
 import { eventManagerOnline } from './class/eventManagerOnline.singleton.js';
 
 $(function() {
+
+  $('#toHomeScreen').on('click', _ => {
+    window.location = '/';
+  })
+
+  $('#nextBattle').on('click', _ => {
+    window.location.reload()
+  })
 
   let audioAnalyser = new Audio();
 
@@ -340,9 +349,10 @@ $(function() {
         winner.roundWon++;
         this.isRoundFinished = true;
         if (winner.roundWon >= 2) { // If the winner have win 2 round or more
+          $('.btn-row').show();
           return message = winner.name + " win the figth"; // the player has win the fight
         }
-
+        
         message = winner.name + " win the round";
         this.resetRound(player1, player2); //Launch au new round
       }

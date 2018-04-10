@@ -17,7 +17,7 @@ class Room {
 
   eventDeal() {
     const eventToDeal =  this.eventList.shift();
-    if (!eventToDeal) return;
+    if (!eventToDeal || this.playersList.length < 2) return;
 
     if (eventToDeal.player == 1) {
       io.sockets.to(this.playersList[1].id).emit('newEvent', eventToDeal);
@@ -68,7 +68,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('disconnect', function (data) {
-    
+
   });
 
   socket.emit('connectionAllowed', {id: player.playerId});
