@@ -318,7 +318,7 @@ $(function() {
         GAME.isPaused = false;
         GAME.isRoundFinished = false;
       }, 500);
-    }, 1500)
+    }, 2500)
   }
 
   GAME.update = function () {
