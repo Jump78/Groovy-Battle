@@ -136,7 +136,10 @@ export default class {
       if (!(this.combo%15)) {
         this.stats.increase('comboMultiplier', 0.5)
       }
-      arrow.die();
+
+      if (arrow) {
+        arrow.die();
+      }
     } else if (message.type == 'defense'){
       const filterFunc = (arrow) => {
         return !arrow.isDie
@@ -150,7 +153,9 @@ export default class {
       if (!(this.combo%15)) {
         this.stats.increase('comboMultiplier', 0.5)
       }
-      arrow.die();
+      if (arrow) {
+        arrow.die();
+      }
     } else if (message.type == 'changeMode') {
       this.changeMode(message.mode);
     } else if (message.type == 'addArrowIncantation'){
