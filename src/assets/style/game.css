@@ -2,12 +2,18 @@
   height: 80vh;
 }
 
+#wrapper canvas{
+  position: absolute;
+  top: 0;
+}
+
 .btn-row {
   display: none;
   position: relative;
   top: 75%;
   width: 100vw;
   text-align: center;
+  z-index: 2;
 }
 
 button {

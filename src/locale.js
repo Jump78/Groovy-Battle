@@ -37,6 +37,14 @@ import { eventManager } from './class/EventManager.singleton.js';
 
 $(function() {
 
+  $('#toHomeScreen').on('click', _ => {
+    window.location = '/';
+  })
+
+  $('#nextBattle').on('click', _ => {
+    window.location.reload();
+  })
+
   let audioAnalyser = new Audio();
 
   audioAnalyser.loadSound({battleSong: song, pure});
@@ -322,6 +330,7 @@ $(function() {
         winner.roundWon++;
         this.isRoundFinished = true;
         if (winner.roundWon >= 2) { // If the winner have win 2 round or more
+          $('.btn-row').show();
           return message = winner.name + " win the figth"; // the player has win the fight
         }
 
