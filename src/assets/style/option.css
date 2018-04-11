@@ -3,6 +3,19 @@
   min-width: 20vw;
 }
 
+a{
+  display: inline-block;
+  text-decoration: none;
+  max-width: 10vw;
+  padding: 10px 50px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+a:hover{
+  background-color: #69bbc1;
+}
+
 form{
   max-width: 500px;
   padding: 20px 12px 10px 20px;
