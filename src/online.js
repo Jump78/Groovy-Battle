@@ -32,7 +32,6 @@ import Sprite from './class/Sprite.class';
 
 import data from './data.json';
 import song from './assets/song/UnexpectedVibes.mp3';
-import pure from './assets/song/signal_pure.mp3';
 
 import { eventManagerOnline } from './class/eventManagerOnline.singleton.js';
 
@@ -48,7 +47,7 @@ $(function() {
 
   let audioAnalyser = new Audio();
 
-  audioAnalyser.loadSound({battleSong: song, pure});
+  audioAnalyser.loadSound({battleSong: song});
 
   const arrowSprite = {upArrowBorderImg, rightArrowBorderImg, downArrowBorderImg, leftArrowBorderImg};
   const guardArrowSprite = {guardArrowDown, guardArrowLeft, guardArrowUp, guardArrowRight};
@@ -352,7 +351,7 @@ $(function() {
           $('.btn-row').show();
           return message = winner.name + " win the figth"; // the player has win the fight
         }
-        
+
         message = winner.name + " win the round";
         this.resetRound(player1, player2); //Launch au new round
       }

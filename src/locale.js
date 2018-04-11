@@ -31,10 +31,9 @@ import Sprite from './class/Sprite.class';
 
 import data from './data.json';
 import song from './assets/song/UnexpectedVibes.mp3';
-import pure from './assets/song/signal_pure.mp3';
+import songData from './assets/song/UnexpectedVibes.json';
 
 import { eventManager } from './class/EventManager.singleton.js';
-
 $(function() {
 
   $('#toHomeScreen').on('click', _ => {
@@ -47,7 +46,7 @@ $(function() {
 
   let audioAnalyser = new Audio();
 
-  audioAnalyser.loadSound({battleSong: song, pure});
+  audioAnalyser.loadSound({battleSong: song});
 
   const arrowSprite = {upArrowBorderImg, rightArrowBorderImg, downArrowBorderImg, leftArrowBorderImg};
   const guardArrowSprite = {guardArrowDown, guardArrowLeft, guardArrowUp, guardArrowRight};
@@ -340,6 +339,17 @@ $(function() {
 
     if (audioAnalyser.bufferLoader.isAllLoaded()) {
       audioAnalyser.playSound('battleSong');
+      // let currentTime = audioAnalyser.audioCtx.currentTime;
+      // let arrow = songData.filter(item => {
+      //   let distance = 200;
+      //   let speed = 2;
+      //   return currentTime >= item.time - ((distance/speed)/60)
+      // })[0];
+      // if (!arrow) return;
+      // console.log(arrow);
+      // songData.splice(songData.indexOf(arrow), 1);
+      // if ((!player1.isDie && !player2.isDie) && player1.mode != 'ultra') player1.addArrow(arrow.direction);
+      // if ((!player1.isDie && !player2.isDie) && player2.mode != 'ultra') player2.addArrow(arrow.direction);
     }
 
     let currentTime = Date.now();
