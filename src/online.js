@@ -160,9 +160,14 @@ $(function() {
         this.coordinates.x = arrowDesti.coordinates.x;
       }
 
+      let player = this;
       this.arrowManager.option.update = function(){
         if (this.coordinates.y > this.maxCoordinates.y + 25) {
           this.fade = true;
+        }
+        if (this.coordinates.y > this.maxCoordinates.y) {
+          player.combo = 0;
+          player.stats.comboMultiplier = 1;
         }
       }
       const ultraModeSprite = new Sprite({
@@ -230,6 +235,13 @@ $(function() {
           font: "30px Impact",
           textAlign: "right",
           value: 0
+        },
+        comboTimer: {
+          x: 225,
+          y: 60,
+          width: 50,
+          baseWidth: 50,
+          height: 10
         }
       }),
       spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
@@ -286,9 +298,14 @@ $(function() {
           this.coordinates.x = arrowDesti.coordinates.x;
         }
 
+        let player = this;
         this.arrowManager.option.update = function(){
           if (this.coordinates.y > this.maxCoordinates.y + 25) {
             this.fade = true;
+          }
+          if (this.coordinates.y > this.maxCoordinates.y) {
+            player.combo = 0;
+            player.stats.comboMultiplier = 1;
           }
         }
 

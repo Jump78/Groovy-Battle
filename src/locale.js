@@ -97,11 +97,19 @@ $(function() {
         color: '#0000FF'
       },
       combo: {
-        x: 220,
-        y: 50,
+        x: 25,
+        y: 450,
         color: '#BADA55',
-        font: "30px Impact",
+        font: "60px Impact",
+        textAlign: "start",
         value: 0
+      },
+      comboTimer: {
+        x: 0,
+        y: 460,
+        width: 50,
+        baseWidth: 50,
+        height: 10
       }
     }),
     spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
@@ -158,9 +166,14 @@ $(function() {
         this.coordinates.x = arrowDesti.coordinates.x;
       }
 
+      let player = this;
       this.arrowManager.option.update = function(){
         if (this.coordinates.y > this.maxCoordinates.y + 25) {
           this.fade = true;
+        }
+        if (this.coordinates.y > this.maxCoordinates.y) {
+          player.combo = 0;
+          player.stats.comboMultiplier = 1;
         }
       }
       const ultraModeSprite = new Sprite({
@@ -220,12 +233,19 @@ $(function() {
         color: '#0000FF'
       },
       combo: {
-        x: 225,
-        y: 50,
+        x: 25,
+        y: 450,
         color: '#BADA55',
-        font: "30px Impact",
+        font: "60px Impact",
         textAlign: "right",
         value: 0
+      },
+      comboTimer: {
+        x: 0,
+        y: 460,
+        width: 50,
+        baseWidth: 50,
+        height: 10
       }
     }),
     spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
@@ -282,9 +302,14 @@ $(function() {
         this.coordinates.x = arrowDesti.coordinates.x;
       }
 
+      let player = this;
       this.arrowManager.option.update = function(){
         if (this.coordinates.y > this.maxCoordinates.y + 25) {
           this.fade = true;
+        }
+        if (this.coordinates.y > this.maxCoordinates.y) {
+          player.combo = 0;
+          player.stats.comboMultiplier = 1;
         }
       }
 

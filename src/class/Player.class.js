@@ -92,6 +92,7 @@ export default class {
     }
     this.eventManager.add({
       playerName: this.name,
+      direction: arrow.direction,
       type: 'attack',
       spell : this.spells[0].name,
       isCrit,
@@ -106,6 +107,7 @@ export default class {
     }
     this.eventManager.add({
       playerName: this.name,
+      direction: arrow.direction,
       type: 'defense',
       spell : null,
       isCrit : isPerfect,
@@ -123,8 +125,7 @@ export default class {
                && (arrow.maxCoordinates.y - (arrow.coordinates.y + arrow.sprite.height)) < this.arrowHitboxRadius
                && (arrow.maxCoordinates.y - arrow.coordinates.y) >= -this.arrowHitboxRadius
       }
-
-      let arrow = this.currentArrows.filter(filterFunc)[0];
+      let arrow = this.arrowManager.getArrowIf(message.direction, 1, filterFunc)[0];
       let spell =  this.spells.filter( item => message.spell == item.name)[0];
       this.attack((spell.self)? this : this.target, spell, message.isCrit);
       if (spell.name == 'Basic attack') {
@@ -161,11 +162,20 @@ export default class {
     } else if (message.type == 'addArrowIncantation'){
       this.incantation.push(message.direction);
       this.hud.incantation.push(message.direction);
+    } else if (message.type == 'arrowFail'){
+      this.combo = 0;
+      this.stats.comboMultiplier = 1;
     }
   }
 
   action (arrow, target, direction) {
-    if (this.mode == 'attack' && arrow) {
+    if (this.mode == 'attack') {
+      if (!arrow) {
+        return this.eventManager.add({
+          playerName: this.name,
+          type: 'arrowFail',
+        });
+      }
       this.attackModeAction( arrow, target);
     } else if (this.mode == 'ultra') {
       this.eventManager.add({
@@ -173,7 +183,13 @@ export default class {
         type: 'addArrowIncantation',
         direction : direction
       });
-    } else if (this.mode == 'defense' && arrow){
+    } else if (this.mode == 'defense'){
+      if (!arrow) {
+        return this.eventManager.add({
+          playerName: this.name,
+          type: 'arrowFail',
+        });
+      }
       this.defenseModeAction( arrow, target);
     }
   }
@@ -253,6 +269,12 @@ export default class {
         self.hud.dynamicArrows.splice(self.hud.dynamicArrows.indexOf(item), 1)
       };
     });
+
+    this.currentComboTimer--;
+    if (this.currentComboTimer <= 0) {
+      this.currentComboTimer = 0;
+      this.combo = 0;
+    }
 
     if(this.isStun && Date.now() - this.StunAt > 2500) {
       this.isStun = false;
