@@ -19,18 +19,6 @@ module.exports = merge(common, {
     new UglifyJSPlugin({
       sourceMap: true
     }),
-    new HtmlWebpackPlugin({
-      filename: path.resolve(__dirname, '../dist/index.html'),
-      template: 'index.html',
-      inject: true,
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true,
-        removeAttributeQuotes: true
-
-      },
-      chunksSortMode: 'dependency'
-    }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       minChunks: function (module) {
@@ -44,10 +32,58 @@ module.exports = merge(common, {
       }
     }),
     new webpack.optimize.CommonsChunkPlugin({
-      name: 'app',
+      name: 'index',
       async: 'vendor-async',
       children: true,
       minChunks: 3
     }),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'index.html',
+      chunks: ['index', 'vendor'],
+      inject: true,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      },
+      chunksSortMode: 'dependency'
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'option.html',
+      template: 'option.html',
+      chunks: ['option', 'vendor'],
+      inject: true,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      },
+      chunksSortMode: 'dependency'
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'locale.html',
+      template: 'locale.html',
+      chunks: ['locale', 'vendor'],
+      inject: true,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      },
+      chunksSortMode: 'dependency'
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'online.html',
+      template: 'online.html',
+      chunks: ['online', 'vendor'],
+      inject: true,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      },
+      chunksSortMode: 'dependency'
+    })    
   ]
 });
