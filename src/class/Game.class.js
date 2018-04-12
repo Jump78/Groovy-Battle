@@ -9,8 +9,8 @@ export default class {
     this.context = this.canvas[0].getContext('2d');
 
     //Set canvas Size
-    this.canvas.attr('width', this.canvas.parent().width());
-    this.canvas.attr('height', this.canvas.parent().height());
+    // this.canvas.attr('width', this.canvas.parent().width());
+    // this.canvas.attr('height', this.canvas.parent().height());
 
     //Scene
     this.scene = option.scene || [];
