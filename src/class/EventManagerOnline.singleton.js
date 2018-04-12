@@ -1,9 +1,10 @@
 import socket from 'socket.io-client';
+let io = null;
 
-if (process.env.PORT) {
-  const io = socket();
+if (window.location.origin.includes('heroku')) {
+  io = socket();
 } else {
-  const io = socket('http://localhost:3000');
+  io = socket('http://localhost:3000');
 }
 
 export class EventManagerOnline {
