@@ -1,6 +1,10 @@
 import socket from 'socket.io-client';
 
-const io = socket('http://localhost:3000');
+if (process.env.PORT) {
+  const io = socket();
+} else {
+  const io = socket('http://localhost:3000');
+}
 
 export class EventManagerOnline {
 
