@@ -356,7 +356,7 @@ $(function() {
 
       // Check if both player are dead
       if (player1.isDie && player2.isDie) {
-        message = "Egalité";
+        message = "Equality";
         this.isRoundFinished = true;
         this.resetRound(player1, player2);
 
@@ -366,10 +366,10 @@ $(function() {
         this.isRoundFinished = true;
         if (winner.roundWon >= 2) { // If the winner have win 2 round or more
           $('.btn-row').show();
-          return message = winner.name + " win the figth"; // the player has win the fight
+          return message = winner.name + " wins the figth"; // the player has win the fight
         }
 
-        message = winner.name + " win the round";
+        message = winner.name + " wins the round";
         this.resetRound(player1, player2); //Launch au new round
       }
 
