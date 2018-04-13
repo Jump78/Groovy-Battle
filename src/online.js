@@ -68,7 +68,7 @@ $(function() {
   let player1 = new Player({
     name: 'Player1',
     coordinates: {
-      x: GAME.canvas.parent().width()/2 - 300,
+      x: GAME.canvas.width()/2 - 300,
       y: 325
     },
     spells: data.spells.map( spell => new Spell(spell)),
@@ -198,7 +198,7 @@ $(function() {
     player2 = new Player({
       name: 'Player2',
       coordinates: {
-        x: GAME.canvas.parent().width()/2 - 20,
+        x: GAME.canvas.width()/2 - 20,
         y: 325
       },
       spells: data.spells.map( spell => new Spell(spell)),

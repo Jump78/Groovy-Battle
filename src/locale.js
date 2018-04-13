@@ -66,7 +66,7 @@ $(function() {
   let player1 = new Player({
     name: 'Player1',
     coordinates: {
-      x: GAME.canvas.parent().width()/2 - 300,
+      x: GAME.canvas.width()/2 - 300,
       y: 325
     },
     keyboard: new Keyboard(JSON.parse(localStorage.getItem('player1Controle'))),
@@ -201,7 +201,7 @@ $(function() {
   let player2 = new Player({
     name: 'Player2',
     coordinates: {
-      x: GAME.canvas.parent().width()/2 - 20,
+      x: GAME.canvas.width()/2 - 20,
       y: 325
     },
     keyboard: new Keyboard(JSON.parse(localStorage.getItem('player2Controle'))),
