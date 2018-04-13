@@ -259,6 +259,8 @@ export default class {
   update() {
     if (this.stats.health <= 0) {
       this.isDie = true;
+      this.stats.health = 0;
+      this.currentAnimation = 'idle';
     }
 
     const self = this;
@@ -269,6 +271,8 @@ export default class {
         self.hud.dynamicArrows.splice(self.hud.dynamicArrows.indexOf(item), 1)
       };
     });
+
+    if (this.isDie || (this.target && this.target.isDie)) return;
 
     this.currentComboTimer--;
     if (this.currentComboTimer <= 0) {
