@@ -299,7 +299,7 @@ export default class {
     let leftArrow = this.arrowManager.getArrowIf('left', 1, filterFunc)[0];
 
     if (this.mode == 'ultra') {
-      //this.stats.decrease('energy', 1);
+      this.stats.decrease('energy', 1);
       if (this.stats.energy <= 0) {
         this.eventManager.add({
           playerName: this.name,
