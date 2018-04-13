@@ -120,15 +120,18 @@ export default class {
     // end
 
     if (message.type == 'attack') {
-      const filterFunc = (arrow) => {
-        return !arrow.isDie
-               && (arrow.maxCoordinates.y - (arrow.coordinates.y + arrow.sprite.height)) < this.arrowHitboxRadius
-               && (arrow.maxCoordinates.y - arrow.coordinates.y) >= -this.arrowHitboxRadius
-      }
-      let arrow = this.arrowManager.getArrowIf(message.direction, 1, filterFunc)[0];
       let spell =  this.spells.filter( item => message.spell == item.name)[0];
       this.attack((spell.self)? this : this.target, spell, message.isCrit);
       if (spell.name == 'Basic attack') {
+        const filterFunc = (arrow) => {
+          return !arrow.isDie
+          && (arrow.maxCoordinates.y - (arrow.coordinates.y + arrow.sprite.height)) < this.arrowHitboxRadius
+          && (arrow.maxCoordinates.y - arrow.coordinates.y) >= -this.arrowHitboxRadius
+        }
+        let arrow = this.arrowManager.getArrowIf(message.direction, 1, filterFunc)[0];
+        if (arrow) {
+          arrow.die();
+        }
         this.stats.increase('energy', 5);
         this.currentAnimation = 'attack';
         this.lastArrowItAt = Date.now();
@@ -138,9 +141,6 @@ export default class {
         this.stats.increase('comboMultiplier', 0.5)
       }
 
-      if (arrow) {
-        arrow.die();
-      }
     } else if (message.type == 'defense'){
       const filterFunc = (arrow) => {
         return !arrow.isDie
