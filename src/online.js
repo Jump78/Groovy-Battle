@@ -98,12 +98,13 @@ $(function() {
         color: '#0000FF'
       },
       combo: {
-        x: 220,
-        y: 50,
+        x: 25,
+        y: 450,
         color: '#BADA55',
-        font: "30px Impact",
+        font: "60px Impact",
+        textAlign: "start",
         value: 0
-      }
+      },
     }),
     spritesheet: new Tileset(GAME.context, playerSpritesheetImg, playerSpritesheetJson, 5),
     arrowManager: new ArrowManager({}),
@@ -229,10 +230,10 @@ $(function() {
           color: '#0000FF'
         },
         combo: {
-          x: 225,
-          y: 50,
+          x: 25,
+          y: 450,
           color: '#BADA55',
-          font: "30px Impact",
+          font: "60px Impact",
           textAlign: "right",
           value: 0
         },
