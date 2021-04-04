@@ -51,7 +51,9 @@ app.use('/', express.static('dist'));
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');}
 );
-
+app.get('/music', function(req, res){
+  res.sendFile(__dirname + '/../musicAnalyzer/index.html');}
+);
 io.on('connection', function(socket){
   console.log('a user connected');
   let room = findRoom();
