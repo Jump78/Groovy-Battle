@@ -7,17 +7,15 @@ let treble = 0;
 let mySound;
 const directions = ['up', 'left', 'down', 'left'];
 let arrows = [];
-let lastNoteTimestamp = 0;
-let offsetNote = 0.150;
 
 function setup() {
+  amplitude = new p5.Amplitude();
+  fft = new p5.FFT();
+
   const input = document.getElementById('input');
 
   input.addEventListener('change', function(event){
     event.preventDefault();
-
-    amplitude = new p5.Amplitude();
-    fft = new p5.FFT();
 
     let sound = URL.createObjectURL(this.files[0]);
     sound.onend = function(e) {
@@ -42,15 +40,6 @@ function setup() {
 }
 
 function draw() {
-  if (!mySound) {
-    return;
-  }
-
-  if (lastNoteTimestamp > 0 && mySound.currentTime() - lastNoteTimestamp < offsetNote) {
-    return;
-  }
-  lastNoteTimestamp = mySound.currentTime();
-
   fft.analyze();
 
   let currentBass = fft.getEnergy("bass");
